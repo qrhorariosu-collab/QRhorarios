@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+  <title>Horario de la sala</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #1a1a1a;
+      font-family: Arial, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .contenedor {
+      text-align: center;
+      padding: 10px;
+      width: 100%;
+    }
+    .titulo {
+      font-size: 1.2em;
+      color: #fff;
+      margin-bottom: 10px;
+      text-transform: capitalize;
+      background: rgba(0,0,0,0.7);
+      padding: 8px 20px;
+      border-radius: 20px;
+      display: inline-block;
+    }
+    img {
+      width: 100%;
+      height: auto;
+      border-radius: 4px;
+      display: block;
+    }
+    .error {
+      color: #ff6b6b;
+      font-size: 1.2em;
+      padding: 40px 20px;
+      background: rgba(0,0,0,0.7);
+      border-radius: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="contenedor">
+    <div class="titulo" id="nombre-sala"></div>
+    <img id="horario-img" alt="Horario de la sala">
+  </div>
+
+  <script>
+    (function() {
+      const params = new URLSearchParams(window.location.search);
+      const sala = params.get('sala');
+      const img = document.getElementById('horario-img');
+      const nombreDiv = document.getElementById('nombre-sala');
+
+      if (!sala) {
+        document.querySelector('.contenedor').innerHTML =
+          '<p class="error">❌ Falta el nombre de la sala. Usa ?sala=nombre</p>';
+        return;
+      }
+
+      nombreDiv.textContent = '📅 ' + sala.replace(/-/g, ' ');
+
+      // timestamp para evitar caché
+      img.src = 'images/' + sala + '.png?t=' + Date.now();
+
+      img.onerror = function() {
+        document.querySelector('.contenedor').innerHTML =
+          '<p class="error">❌ Sin horario para esta sala.<br><small>Aún no se ha cargado la imagen.</small></p>';
+      };
+    })();
+  </script>
+</body>
+</html>
