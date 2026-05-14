@@ -6,11 +6,17 @@ on:
       - 'horarios.xlsx'
   workflow_dispatch:
 
+permissions:
+  contents: write
+  pages: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
+    
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout código
+        uses: actions/checkout@v4
       
       - name: Configurar Python
         uses: actions/setup-python@v5
@@ -19,10 +25,10 @@ jobs:
           
       - name: Instalar dependencias
         run: |
-          pip install -r requirements.txt
+          pip install pandas openpyxl qrcode pillow
           
       - name: Ejecutar generador
-        run: python generar.py
+        run: python generator.py
         
       - name: Desplegar a GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
@@ -30,3 +36,4 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./output
           publish_branch: gh-pages
+          force_orphan: true

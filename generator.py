@@ -322,7 +322,7 @@ def main():
         generar_html_sala(sala_nombre, sala_data['horarios'], html_path)
         
         # Generar QR
-        url = f"https://qrhorariosu-collab.github.io/repo/salas/{nombre_archivo}.html"
+        url = f"https://qrhorariosu-collab.github.io/QRhorarios/salas/{nombre_archivo}.html""
         qr = qrcode.make(url)
         qr_path = f'output/qrs/{nombre_archivo}.png'
         qr.save(qr_path)
