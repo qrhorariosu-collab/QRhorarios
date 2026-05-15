@@ -4,124 +4,77 @@ import re
 from pathlib import Path
 from datetime import datetime
 import html
+import os
 
-def parse_celda_horario(texto):
-    """Extrae toda la información de una celda del Excel"""
-    if pd.isna(texto) or texto == "" or str(texto).strip() == "":
-        return None
+def leer_excel_semanas(archivo_excel, semana_actual="S10"):
+    """
+    Lee el Excel con formato de tabla plana
+    Columnas: ASIGNATURA, NOMBRE, DIA, HORA INICIO, HORA FIN, SALA, S10, etc.
+    """
+    print(f"📖 Leyendo archivo: {archivo_excel}")
+    df = pd.read_excel(archivo_excel)
     
-    texto = str(texto)
+    # Verificar columnas necesarias
+    columnas_necesarias = ['ASIGNATURA', 'NOMBRE', 'DIA', 'HORA INICIO', 'HORA FIN', 'SALA']
+    for col in columnas_necesarias:
+        if col not in df.columns:
+            print(f"❌ Error: No se encuentra la columna '{col}'")
+            print(f"📋 Columnas disponibles: {list(df.columns)}")
+            return {}
     
-    # Dividir por líneas
-    lineas = texto.strip().split('\n')
-    if len(lineas) < 3:
-        return None
+    # Filtrar por semana actual (columna como S10, S11, etc.)
+    col_semana = semana_actual
+    if col_semana in df.columns:
+        df = df[df[col_semana] == 1]
+        print(f"✅ Filtrado por {semana_actual}: {len(df)} registros activos")
+    else:
+        print(f"⚠️ No se encuentra la columna {semana_actual}, usando todos los registros")
     
-    # Línea 1: Código y nombre
-    linea1 = lineas[0].strip()
-    codigo_match = re.match(r'^([A-Z0-9]+-\d+)', linea1)
-    codigo = codigo_match.group(1) if codigo_match else "S/C"
-    nombre = linea1.replace(codigo, '').replace('|', '').strip()
-    if nombre.startswith('...'):
-        nombre = nombre[3:]  # Quitar los puntos suspensivos
-    
-    # Línea 2: Tipo, cupos, sala, ID
-    linea2 = lineas[1].strip()
-    tipo_match = re.search(r'(TEO|TEOPRA|LAB|AYU|SEM)\s*(\d+)?', linea2)
-    tipo = tipo_match.group(0) if tipo_match else "S/T"
-    
-    cupos_match = re.search(r'\((\d+)\)', linea2)
-    cupos = cupos_match.group(1) if cupos_match else "?"
-    
-    sala_match = re.search(r'F1SALA\d+\s*\(([^)]+)\)', linea2)
-    cupos_sala = sala_match.group(1) if sala_match else "?"
-    
-    id_match = re.search(r'\|\s*(\d{7,10})', linea2)
-    id_clase = id_match.group(1) if id_match else "?"
-    
-    # Línea 3: Profesor
-    linea3 = lineas[2].strip() if len(lineas) > 2 else ""
-    rut_match = re.search(r'^(\d{7,8}-[0-9K])', linea3)
-    rut = rut_match.group(1) if rut_match else ""
-    profesor = linea3.replace(rut, '').strip() if rut else linea3
-    
-    return {
-        'codigo': codigo,
-        'nombre': nombre[:80],
-        'tipo': tipo,
-        'cupos': cupos,
-        'cupos_sala': cupos_sala,
-        'id_clase': id_clase,
-        'profesor': profesor[:60] if profesor else "Sin asignar"
-    }
-
-def leer_excel_completo(archivo):
-    """Lee el Excel y extrae todas las salas con sus horarios"""
-    df = pd.read_excel(archivo, header=None)
-    
+    # Agrupar por sala
     salas = {}
-    i = 0
     
-    while i < len(df):
-        celda = str(df.iloc[i, 0]) if pd.notna(df.iloc[i, 0]) else ""
-        
-        # Detectar sala
-        if "Sala SALA" in celda:
-            # Extraer nombre de sala
-            nombre_sala = celda.replace("Sala", "").strip()
-            nombre_sala = re.sub(r'\s*-\s*\[.*\]', '', nombre_sala)
-            
-            print(f"  📌 Procesando: {nombre_sala}")
-            
-            # Saltar línea de "Horas"
-            i += 2
-            if i >= len(df):
-                break
-                
-            # Leer días (fila de encabezados)
-            dias_fila = df.iloc[i]
-            dias = []
-            for col in range(1, 7):
-                dia = str(dias_fila[col]) if pd.notna(dias_fila[col]) else ""
-                dias.append(dia)
-            i += 1
-            
-            # Inicializar estructura de horarios para esta sala
-            horarios = {}
-            
-            # Leer filas de horarios
-            while i < len(df):
-                fila = df.iloc[i]
-                hora_texto = str(fila[0]) if pd.notna(fila[0]) else ""
-                
-                # Si encontramos otra sala o línea vacía grande, salimos
-                if "Sala SALA" in hora_texto:
-                    break
-                
-                # Si es una hora válida (contiene ":" y números)
-                if hora_texto and re.search(r'\d+:\d+:', hora_texto):
-                    for col in range(1, 7):
-                        if col-1 < len(dias) and dias[col-1]:
-                            contenido = fila[col]
-                            clase = parse_celda_horario(contenido)
-                            if clase:
-                                dia = dias[col-1]
-                                if hora_texto not in horarios:
-                                    horarios[hora_texto] = {}
-                                horarios[hora_texto][dia] = clase
-                i += 1
-            
-            if horarios:
-                salas[nombre_sala] = horarios
+    for sala in df['SALA'].unique():
+        if pd.isna(sala):
             continue
-        i += 1
+            
+        df_sala = df[df['SALA'] == sala]
+        print(f"  📌 Procesando sala: {sala} ({len(df_sala)} clases)")
+        
+        horarios = {}
+        
+        for _, row in df_sala.iterrows():
+            dia = row['DIA']
+            hora_inicio = row['HORA INICIO']
+            hora_fin = row['HORA FIN']
+            asignatura = row['ASIGNATURA']
+            nombre = row['NOMBRE']
+            
+            # Formatear hora para mostrar
+            hora_str = f"{hora_inicio} - {hora_fin}"
+            
+            # Crear clave única
+            clave_hora = f"{hora_inicio}_{hora_fin}"
+            
+            if clave_hora not in horarios:
+                horarios[clave_hora] = {'hora': hora_str, 'clases': {}}
+            
+            horarios[clave_hora]['clases'][dia] = {
+                'codigo': asignatura,
+                'nombre': nombre
+            }
+        
+        salas[sala] = horarios
     
     return salas
 
-def generar_html_sala(nombre_sala, horarios, output_path):
-    """Genera la página HTML para una sala con todos los datos"""
+def generar_html_sala(nombre_sala, horarios, output_path, semana_actual):
+    """Genera la página HTML para una sala"""
     
+    # Orden de días
     dias_orden = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado']
+    
+    # Ordenar horas
+    horas_ordenadas = sorted(horarios.keys(), key=lambda x: int(x.split('_')[0].split(':')[0]))
     
     # Construir tabla
     html_tabla = '<div style="overflow-x: auto;"><table class="horario-table">\n'
@@ -130,17 +83,17 @@ def generar_html_sala(nombre_sala, horarios, output_path):
         html_tabla += f'<th>{dia}</th>'
     html_tabla += '</tr></thead><tbody>\n'
     
-    for hora, clases_por_dia in sorted(horarios.items(), key=lambda x: int(x[0].split(':')[0])):
-        html_tabla += f'<tr>\n<td class="hora-cell">{hora}</td>\n'
+    for hora_key in horas_ordenadas:
+        hora_info = horarios[hora_key]
+        html_tabla += f'<tr><td class="hora-cell">{hora_info["hora"]}</td>\n'
+        
         for dia in dias_orden:
-            if dia in clases_por_dia:
-                clase = clases_por_dia[dia]
+            if dia in hora_info['clases']:
+                clase = hora_info['clases'][dia]
                 html_tabla += f'''
                 <td class="clase-cell">
                     <div class="codigo">{html.escape(clase['codigo'])}</div>
                     <div class="nombre">{html.escape(clase['nombre'])}</div>
-                    <div class="tipo">{html.escape(clase['tipo'])} | Cupos: {clase['cupos']}</div>
-                    <div class="profesor">{html.escape(clase['profesor'])}</div>
                 </td>
                 '''
             else:
@@ -182,9 +135,13 @@ def generar_html_sala(nombre_sala, horarios, output_path):
             font-size: 1.8rem;
             margin-bottom: 5px;
         }}
-        .header p {{
-            opacity: 0.9;
-            font-size: 0.9rem;
+        .semana-badge {{
+            display: inline-block;
+            background: #e74c3c;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-top: 10px;
         }}
         .horario-table {{
             width: 100%;
@@ -225,20 +182,6 @@ def generar_html_sala(nombre_sala, horarios, output_path):
             margin: 6px 0;
             font-size: 0.85rem;
         }}
-        .tipo {{
-            background: #e8e8e8;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-size: 0.7rem;
-            display: inline-block;
-            margin: 4px 0;
-        }}
-        .profesor {{
-            font-size: 0.7rem;
-            color: #3498db;
-            margin-top: 6px;
-            font-style: italic;
-        }}
         .vacio-cell {{
             background: #f5f5f5;
             color: #bdc3c7;
@@ -259,9 +202,6 @@ def generar_html_sala(nombre_sala, horarios, output_path):
             .header h1 {{
                 font-size: 1.2rem;
             }}
-            .codigo, .nombre {{
-                font-size: 0.65rem;
-            }}
         }}
         @media print {{
             body {{
@@ -281,10 +221,13 @@ def generar_html_sala(nombre_sala, horarios, output_path):
     <div class="header">
         <h1>📋 {html.escape(nombre_sala)}</h1>
         <p>Horario semanal actualizado</p>
+        <div class="semana-badge">📅 {semana_actual}</div>
     </div>
     {html_tabla}
     <div class="footer">
         🗓️ Última actualización: {datetime.now().strftime('%d/%m/%Y %H:%M')}
+        <br>
+        🔄 Los horarios se actualizan automáticamente cada semana
     </div>
 </div>
 </body>
@@ -293,92 +236,68 @@ def generar_html_sala(nombre_sala, horarios, output_path):
     with open(output_path, 'w', encoding='utf-8') as f:
         f.write(html_completo)
 
-def main():
-    print("=" * 60)
-    print("📖 Generador de Horarios - Leyendo Excel...")
-    print("=" * 60)
+def generar_index(salas, semana_actual, output_dir):
+    """Genera la página principal con todas las salas"""
     
-    # Leer todas las salas
-    salas = leer_excel_completo('horarios.xlsx')
-    
-    if not salas:
-        print("❌ No se encontraron salas con horarios")
-        return
-    
-    print(f"\n✅ Encontradas {len(salas)} salas con horarios:")
-    for nombre in salas.keys():
-        print(f"   - {nombre}")
-    
-    # Crear directorios
-    Path('output/salas').mkdir(parents=True, exist_ok=True)
-    Path('output/qrs').mkdir(parents=True, exist_ok=True)
-    
-    # Generar páginas y QRs
-    for nombre_sala, horarios in salas.items():
-        print(f"\n📝 Generando: {nombre_sala}")
-        
-        # Nombre para archivo
-        nombre_archivo = re.sub(r'[^\w\s]', '', nombre_sala)
-        nombre_archivo = re.sub(r'\s+', '_', nombre_archivo)
-        
-        # Generar HTML
-        html_path = f'output/salas/{nombre_archivo}.html'
-        generar_html_sala(nombre_sala, horarios, html_path)
-        
-        # Generar QR
-        url = f"https://qrhorariosu-collab.github.io/QRhorarios/salas/{nombre_archivo}.html"
-        qr = qrcode.make(url)
-        qr.save(f'output/qrs/{nombre_archivo}.png')
-        print(f"   ✅ QR generado")
-    
-    # Generar index.html
-    index_html = '''<!DOCTYPE html>
+    index_html = f'''<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Horarios - Todas las Salas</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
+        * {{ margin: 0; padding: 0; box-sizing: border-box; }}
+        body {{
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             padding: 20px;
             min-height: 100vh;
-        }
-        .container { max-width: 1200px; margin: 0 auto; }
-        h1 {
+        }}
+        .container {{ max-width: 1200px; margin: 0 auto; }}
+        h1 {{
             color: white;
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 10px;
             font-size: 2rem;
-        }
-        .grid {
+        }}
+        .semana-info {{
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+            font-size: 1.1rem;
+        }}
+        .semana-badge {{
+            background: #e74c3c;
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+        }}
+        .grid {{
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
             gap: 20px;
-        }
-        .card {
+        }}
+        .card {{
             background: white;
             border-radius: 15px;
             overflow: hidden;
             box-shadow: 0 10px 20px rgba(0,0,0,0.1);
             transition: transform 0.2s;
             text-align: center;
-        }
-        .card:hover { transform: translateY(-5px); }
-        .card h3 {
+        }}
+        .card:hover {{ transform: translateY(-5px); }}
+        .card h3 {{
             background: #2c3e50;
             color: white;
             padding: 15px;
             font-size: 1rem;
-        }
-        .card img {
+        }}
+        .card img {{
             width: 150px;
             margin: 20px auto;
             display: block;
-        }
-        .card a {
+        }}
+        .card a {{
             display: block;
             background: #3498db;
             color: white;
@@ -387,19 +306,22 @@ def main():
             margin: 15px;
             border-radius: 8px;
             font-weight: bold;
-        }
-        .card a:hover { background: #2980b9; }
-        .footer {
+        }}
+        .card a:hover {{ background: #2980b9; }}
+        .footer {{
             text-align: center;
             color: white;
             margin-top: 30px;
             padding: 20px;
-        }
+        }}
     </style>
 </head>
 <body>
 <div class="container">
     <h1>🏫 Sistema de Horarios por Sala</h1>
+    <div class="semana-info">
+        <span class="semana-badge">📅 Semana {semana_actual}</span>
+    </div>
     <div class="grid">
 '''
     
@@ -416,22 +338,83 @@ def main():
     index_html += f'''
     </div>
     <div class="footer">
-        <p>📅 Última actualización: {datetime.now().strftime('%d/%m/%Y %H:%M:%S')}</p>
         <p>🔲 Los códigos QR son permanentes - Escanea una sola vez</p>
-        <p>✅ Sistema actualizado automáticamente desde Excel</p>
+        <p>✅ Actualizado automáticamente desde Excel - Semana {semana_actual}</p>
+        <p>📅 {datetime.now().strftime('%d/%m/%Y %H:%M:%S')}</p>
     </div>
 </div>
 </body>
 </html>'''
     
-    with open('output/index.html', 'w', encoding='utf-8') as f:
+    with open(output_dir / 'index.html', 'w', encoding='utf-8') as f:
         f.write(index_html)
+
+def main():
+    print("=" * 60)
+    print("📖 GENERADOR DE HORARIOS - FORMATO TABLA PLANA")
+    print("=" * 60)
+    
+    # Configuración
+    ARCHIVO_EXCEL = 'horarios.xlsx'
+    SEMANA_ACTUAL = 'S10'  # Cambia esto según la semana que quieras mostrar
+    
+    # Verificar que el archivo existe
+    if not os.path.exists(ARCHIVO_EXCEL):
+        print(f"❌ Error: No se encuentra el archivo {ARCHIVO_EXCEL}")
+        print("📄 Asegúrate de subir el archivo Excel con el formato correcto")
+        return
+    
+    # Leer Excel
+    salas = leer_excel_semanas(ARCHIVO_EXCEL, SEMANA_ACTUAL)
+    
+    if not salas:
+        print("❌ No se encontraron salas con horarios")
+        print("Verifica que el Excel tenga las columnas: ASIGNATURA, NOMBRE, DIA, HORA INICIO, HORA FIN, SALA")
+        return
+    
+    print(f"\n✅ Encontradas {len(salas)} salas con horarios")
+    
+    # Crear directorios
+    output_dir = Path('output')
+    salas_dir = output_dir / 'salas'
+    qrs_dir = output_dir / 'qrs'
+    
+    salas_dir.mkdir(parents=True, exist_ok=True)
+    qrs_dir.mkdir(parents=True, exist_ok=True)
+    
+    # Generar páginas y QRs
+    for nombre_sala, horarios in salas.items():
+        print(f"\n📝 Generando: {nombre_sala}")
+        
+        # Limpiar nombre
+        nombre_archivo = re.sub(r'[^\w\s]', '', nombre_sala)
+        nombre_archivo = re.sub(r'\s+', '_', nombre_archivo)
+        
+        # Generar HTML
+        html_path = salas_dir / f'{nombre_archivo}.html'
+        generar_html_sala(nombre_sala, horarios, html_path, SEMANA_ACTUAL)
+        
+        # Generar QR
+        url = f"https://qrhorariosu-collab.github.io/QRhorarios/salas/{nombre_archivo}.html"
+        qr = qrcode.make(url)
+        qr.save(qrs_dir / f'{nombre_archivo}.png')
+        print(f"   ✅ QR generado")
+    
+    # Generar index
+    generar_index(salas, SEMANA_ACTUAL, output_dir)
     
     print("\n" + "=" * 60)
     print("✅ ¡GENERACIÓN COMPLETADA!")
     print(f"📊 {len(salas)} salas procesadas")
+    print(f"📅 Semana actual: {SEMANA_ACTUAL}")
     print("🌐 Sitio web: https://qrhorariosu-collab.github.io/QRhorarios/")
     print("=" * 60)
+    
+    # Mostrar resumen de archivos creados
+    print("\n📂 Archivos generados:")
+    print(f"   - output/index.html")
+    print(f"   - output/salas/ ({len(salas)} archivos)")
+    print(f"   - output/qrs/ ({len(salas)} códigos QR)")
 
 if __name__ == "__main__":
     main()
