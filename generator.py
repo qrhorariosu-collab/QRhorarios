@@ -460,21 +460,12 @@ def generar_index_con_estilo(salas, semana_actual, output_dir):
 
 <script>
 // Hash SHA-256 de la contraseña "Horariosu2026.."
-const PASSWORD_HASH = "{PASSWORD_HASH}";
+const PASSWORD = "admin2026";
 
-async function hashPassword(password) {
-    const encoder = new TextEncoder();
-    const data = encoder.encode(password);
-    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-}
-
-async function verificarPassword() {
+function verificarPassword() {
     const inputPass = document.getElementById('password').value;
-    const inputHash = await hashPassword(inputPass);
     
-    if (inputHash === PASSWORD_HASH) {
+    if (inputPass === PASSWORD) {
         document.getElementById('loginBox').style.display = 'none';
         document.getElementById('contenido').style.display = 'block';
     } else {
