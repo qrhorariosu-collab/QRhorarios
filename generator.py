@@ -43,14 +43,30 @@ def leer_excel_semanas(archivo_excel, semana_actual="S10"):
             if asignatura == 'BLOQUEO' or nombre == 'BLOQUEO':
                 continue
             
-            # Usar hora_inicio como clave
-            if hora_inicio not in horarios:
-                horarios[hora_inicio] = {
-                    'hora': f"{hora_inicio.strftime('%H:%M')} - {hora_fin.strftime('%H:%M')}",
+            # Convertir hora a string para usar como clave
+            hora_inicio_str = str(hora_inicio)
+            hora_fin_str = str(hora_fin)
+            
+            # Formatear horas
+            if isinstance(hora_inicio, datetime):
+                hora_inicio_str = hora_inicio.strftime('%H:%M')
+            else:
+                hora_inicio_str = str(hora_inicio)[:5] if len(str(hora_inicio)) > 5 else str(hora_inicio)
+            
+            if isinstance(hora_fin, datetime):
+                hora_fin_str = hora_fin.strftime('%H:%M')
+            else:
+                hora_fin_str = str(hora_fin)[:5] if len(str(hora_fin)) > 5 else str(hora_fin)
+            
+            clave_hora = str(row['HORA INICIO'])
+            
+            if clave_hora not in horarios:
+                horarios[clave_hora] = {
+                    'hora': f"{hora_inicio_str} - {hora_fin_str}",
                     'clases': {}
                 }
             
-            horarios[hora_inicio]['clases'][dia] = {
+            horarios[clave_hora]['clases'][dia] = {
                 'codigo': asignatura,
                 'nombre': nombre
             }
