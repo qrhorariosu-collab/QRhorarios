@@ -6,25 +6,30 @@ from datetime import datetime, time
 import html
 import os
 
-def obtener_bloque_horario(hora_inicio, hora_fin):
-    """Determina a qué bloque de 90 minutos pertenece una hora"""
+def obtener_bloques_ocupados(hora_inicio, hora_fin):
+    """Determina TODOS los bloques de 90 minutos que ocupa una clase"""
     # Bloques estándar de 90 minutos
     bloques = [
-        ("08:10:00", "09:40:00"),
-        ("09:50:00", "11:20:00"),
-        ("11:30:00", "13:00:00"),
-        ("14:10:00", "15:40:00"),
-        ("15:50:00", "17:20:00"),
-        ("17:30:00", "19:00:00"),
-        ("19:10:00", "20:40:00"),
+        ("08:10:00", "09:40:00", "08:10-09:40"),
+        ("09:50:00", "11:20:00", "09:50-11:20"),
+        ("11:30:00", "13:00:00", "11:30-13:00"),
+        ("14:10:00", "15:40:00", "14:10-15:40"),
+        ("15:50:00", "17:20:00", "15:50-17:20"),
+        ("17:30:00", "19:00:00", "17:30-19:00"),
+        ("19:10:00", "20:40:00", "19:10-20:40"),
     ]
     
     hora_inicio_str = hora_inicio.strftime('%H:%M:%S') if isinstance(hora_inicio, time) else str(hora_inicio)
+    hora_fin_str = hora_fin.strftime('%H:%M:%S') if isinstance(hora_fin, time) else str(hora_fin)
     
-    for bloque_inicio, bloque_fin in bloques:
-        if hora_inicio_str >= bloque_inicio and hora_inicio_str < bloque_fin:
-            return bloque_inicio, bloque_fin
-    return None, None
+    bloques_ocupados = []
+    
+    for bloque_inicio, bloque_fin, bloque_label in bloques:
+        # Si la clase empieza antes o en el inicio del bloque y termina después del inicio
+        if hora_inicio_str < bloque_fin and hora_fin_str > bloque_inicio:
+            bloques_ocupados.append((bloque_inicio, bloque_fin, bloque_label))
+    
+    return bloques_ocupados
 
 def leer_excel_semanas(archivo_excel, semana_actual="S10"):
     """Lee el Excel con formato de tabla plana"""
@@ -59,12 +64,12 @@ def leer_excel_semanas(archivo_excel, semana_actual="S10"):
             asignatura = row['ASIGNATURA']
             nombre = row['NOMBRE']
             
-            # Determinar bloque horario
-            bloque_inicio, bloque_fin = obtener_bloque_horario(hora_inicio, hora_fin)
+            # Obtener TODOS los bloques que ocupa esta clase
+            bloques_ocupados = obtener_bloques_ocupados(hora_inicio, hora_fin)
             
-            if bloque_inicio:
+            for bloque_inicio, bloque_fin, bloque_label in bloques_ocupados:
                 clave_bloque = f"{bloque_inicio}_{bloque_fin}"
-                hora_str = f"{bloque_inicio[:5]} - {bloque_fin[:5]}"
+                hora_str = bloque_label
                 
                 if clave_bloque not in horarios:
                     horarios[clave_bloque] = {
@@ -73,13 +78,15 @@ def leer_excel_semanas(archivo_excel, semana_actual="S10"):
                         'clases': {}
                     }
                 
-                # Guardar la clase (incluyendo BLOQUEO)
-                horarios[clave_bloque]['clases'][dia] = {
-                    'codigo': asignatura,
-                    'nombre': nombre,
-                    'hora_inicio': hora_inicio.strftime('%H:%M') if isinstance(hora_inicio, time) else str(hora_inicio)[:5],
-                    'hora_fin': hora_fin.strftime('%H:%M') if isinstance(hora_fin, time) else str(hora_fin)[:5]
-                }
+                # Si ya hay una clase en este día y bloque, no sobrescribir (priorizar la primera)
+                if dia not in horarios[clave_bloque]['clases']:
+                    horarios[clave_bloque]['clases'][dia] = {
+                        'codigo': asignatura,
+                        'nombre': nombre,
+                        'hora_inicio': hora_inicio.strftime('%H:%M') if isinstance(hora_inicio, time) else str(hora_inicio)[:5],
+                        'hora_fin': hora_fin.strftime('%H:%M') if isinstance(hora_fin, time) else str(hora_fin)[:5],
+                        'multibloque': len(bloques_ocupados) > 1
+                    }
         
         if horarios:
             salas[sala] = horarios
@@ -109,32 +116,20 @@ def generar_html_sala(nombre_sala, horarios, output_path, semana_actual):
             if dia in bloque['clases']:
                 clase = bloque['clases'][dia]
                 
-                # Verificar si la clase ocupa más de un bloque
-                hora_inicio = clase.get('hora_inicio', '')
-                hora_fin = clase.get('hora_fin', '')
-                
                 # Mostrar BLOQUEO o clase normal
                 if clase['codigo'] == 'BLOQUEO' or clase['nombre'] == 'BLOQUEO':
                     html_tabla += '<td class="bloqueo-cell">🔒 BLOQUEO</td>\n'
                 else:
-                    # Truncar nombre si es muy largo
-                    nombre_corto = clase['nombre'][:40] + '...' if len(clase['nombre']) > 40 else clase['nombre']
+                    nombre_corto = clase['nombre'][:35] + '...' if len(clase['nombre']) > 35 else clase['nombre']
                     
-                    # Si la clase dura más de 90 minutos, indicarlo
-                    duracion_extra = ""
-                    if hora_inicio and hora_fin:
-                        try:
-                            inicio_h = int(hora_inicio.split(':')[0])
-                            fin_h = int(hora_fin.split(':')[0])
-                            if fin_h - inicio_h >= 2:
-                                duracion_extra = f' <span class="duracion">({hora_inicio}-{hora_fin})</span>'
-                        except:
-                            pass
+                    # Indicar si es clase que ocupa múltiples bloques
+                    multibloque = clase.get('multibloque', False)
+                    horario_extendido = f" ({clase['hora_inicio']}-{clase['hora_fin']})" if multibloque else ""
                     
                     html_tabla += f'''
-                    <td class="clase-cell">
+                    <td class="clase-cell{' multibloque' if multibloque else ''}">
                         <div class="codigo">{html.escape(clase['codigo'])}</div>
-                        <div class="nombre">{html.escape(nombre_corto)}{duracion_extra}</div>
+                        <div class="nombre">{html.escape(nombre_corto)}<span class="horario-ext">{horario_extendido}</span></div>
                     </td>
                     '''
             else:
@@ -207,6 +202,10 @@ def generar_html_sala(nombre_sala, horarios, output_path, semana_actual):
         .clase-cell {{
             background: #fafafa;
         }}
+        .clase-cell.multibloque {{
+            background: #e8f4fd;
+            border-left: 3px solid #3498db;
+        }}
         .codigo {{
             font-weight: bold;
             color: #e74c3c;
@@ -219,10 +218,12 @@ def generar_html_sala(nombre_sala, horarios, output_path, semana_actual):
             font-size: 0.8rem;
             line-height: 1.3;
         }}
-        .duracion {{
+        .horario-ext {{
             font-size: 0.7rem;
             color: #e67e22;
             font-weight: normal;
+            display: inline-block;
+            margin-left: 5px;
         }}
         .bloqueo-cell {{
             background: #fff3cd;
@@ -276,7 +277,7 @@ def generar_html_sala(nombre_sala, horarios, output_path, semana_actual):
 
 def main():
     print("=" * 60)
-    print("📖 GENERADOR DE HORARIOS - CON BLOQUES Y DÍAS CORRECTOS")
+    print("📖 GENERADOR DE HORARIOS - CLASES MULTIBLOQUE")
     print("=" * 60)
     
     ARCHIVO_EXCEL = 'horarios.xlsx'
