@@ -249,7 +249,8 @@ def generar_index_con_estilo(salas, semana_actual, output_dir):
     # Hash SHA-256 de la contraseña "Horariosu2026.."
     PASSWORD_HASH = "fc347e6e0d6a567aaffb121b21f7c7f1b1376785fe2afac3c7f7e63c98b7e8b0"
     
-    index_html = f'''<!DOCTYPE html>
+    # Construir el HTML completo
+    html_completo = f'''<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -338,7 +339,7 @@ def generar_index_con_estilo(salas, semana_actual, output_dir):
         hash_sala = generar_hash_sala(nombre_sala)
         nombre_mostrar = nombre_sala.replace('PDSALA', 'SALA ')
         
-        index_html += f'''
+        html_completo += f'''
             <div class="card" data-nombre="{html.escape(nombre_sala).lower()}">
                 <div class="card-header">
                     <h3>{html.escape(nombre_mostrar)}</h3>
@@ -353,7 +354,7 @@ def generar_index_con_estilo(salas, semana_actual, output_dir):
             </div>
 '''
     
-    index_html += f'''
+    html_completo += f'''
         </div>
         
         <div class="footer">
@@ -508,11 +509,6 @@ function descargarQR(hash, nombreSala) {{
     link.click();
     document.body.removeChild(link);
 }}
-
-// Ejecutar filtrar al cargar el contenido
-function initFiltro() {{
-    filtrarSalas();
-}}
 </script>
 </body>
 </html>'''
@@ -569,7 +565,7 @@ def main():
     print("✅ ¡GENERACIÓN COMPLETADA!")
     print(f"📊 {len(salas)} salas procesadas")
     print(f"🌐 https://qrhorariosu-collab.github.io/QRhorarios/")
-    print("🔒 Contraseña hasheada: Horariosu2026..")
+    print("🔒 Contraseña: Horariosu2026..")
     print("=" * 60)
 
 if __name__ == "__main__":
