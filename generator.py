@@ -462,25 +462,25 @@ def generar_index_con_estilo(salas, semana_actual, output_dir):
 // Hash SHA-256 de la contraseña "Horariosu2026.."
 const PASSWORD_HASH = "{PASSWORD_HASH}";
 
-async function hashPassword(password) {{
+async function hashPassword(password) {
     const encoder = new TextEncoder();
     const data = encoder.encode(password);
     const hashBuffer = await crypto.subtle.digest('SHA-256', data);
     const hashArray = Array.from(new Uint8Array(hashBuffer));
     return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-}}
+}
 
-async function verificarPassword() {{
+async function verificarPassword() {
     const inputPass = document.getElementById('password').value;
     const inputHash = await hashPassword(inputPass);
     
-    if (inputHash === PASSWORD_HASH) {{
+    if (inputHash === PASSWORD_HASH) {
         document.getElementById('loginBox').style.display = 'none';
         document.getElementById('contenido').style.display = 'block';
-    }} else {{
+    } else {
         document.getElementById('errorMsg').innerHTML = '❌ Contraseña incorrecta';
-    }}
-}}
+    }
+}
 
 function filtrarSalas() {{
     let input = document.getElementById('buscador');
