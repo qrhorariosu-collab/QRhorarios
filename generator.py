@@ -46,7 +46,7 @@ def leer_excel_semanas(archivo_excel, semana_actual="S10"):
             # Usar hora_inicio como clave
             if hora_inicio not in horarios:
                 horarios[hora_inicio] = {
-                    'hora': f"{hora_inicio[:5]} - {hora_fin[:5]}",
+                    'hora': f"{hora_inicio.strftime('%H:%M')} - {hora_fin.strftime('%H:%M')}",
                     'clases': {}
                 }
             
