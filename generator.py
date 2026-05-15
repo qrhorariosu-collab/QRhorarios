@@ -6,10 +6,87 @@ from datetime import datetime
 import html
 import os
 
+def agrupar_bloques_horarios(df_sala):
+    """
+    Agrupa las clases que pertenecen al mismo bloque horario
+    Ej: 8:10-8:55 y 8:55-9:40 se agrupan en 8:10-9:40
+    """
+    # Definir los bloques completos (hora_inicio, hora_fin)
+    bloques = [
+        ("08:10:00", "09:40:00"),
+        ("09:50:00", "11:20:00"),
+        ("11:30:00", "13:00:00"),
+        ("14:10:00", "15:40:00"),
+        ("15:50:00", "17:20:00"),
+        ("17:30:00", "19:00:00"),
+        ("19:10:00", "20:40:00"),
+    ]
+    
+    # Mapeo de rangos cortos a bloque completo
+    mapeo_bloques = {}
+    for bloque_inicio, bloque_fin in bloques:
+        # Extraer hora numérica para ordenar
+        hora_num = int(bloque_inicio.split(':')[0])
+        
+        # Asignar rangos de 45 minutos a este bloque
+        rango1_inicio = bloque_inicio
+        rango1_fin = f"{int(bloque_inicio.split(':')[0])}:{int(bloque_inicio.split(':')[1]) + 45}:00"
+        
+        rango2_inicio = rango1_fin
+        rango2_fin = bloque_fin
+        
+        mapeo_bloques[(rango1_inicio, rango1_fin)] = (bloque_inicio, bloque_fin, hora_num)
+        mapeo_bloques[(rango2_inicio, rango2_fin)] = (bloque_inicio, bloque_fin, hora_num)
+    
+    # Agrupar por bloque
+    bloques_agrupados = {}
+    
+    for _, row in df_sala.iterrows():
+        hora_inicio = row['HORA INICIO']
+        hora_fin = row['HORA FIN']
+        dia = row['DIA']
+        asignatura = row['ASIGNATURA']
+        nombre = row['NOMBRE']
+        
+        # Buscar a qué bloque pertenece
+        bloque_info = None
+        for (r_inicio, r_fin), (b_inicio, b_fin, hora_num) in mapeo_bloques.items():
+            if r_inicio == hora_inicio and r_fin == hora_fin:
+                bloque_info = (b_inicio, b_fin, hora_num)
+                break
+        
+        if bloque_info:
+            b_inicio, b_fin, hora_num = bloque_info
+            clave_bloque = f"{b_inicio}_{b_fin}"
+            
+            if clave_bloque not in bloques_agrupados:
+                bloques_agrupados[clave_bloque] = {
+                    'hora_inicio': b_inicio,
+                    'hora_fin': b_fin,
+                    'hora_num': hora_num,
+                    'clases': {}
+                }
+            
+            # Si ya hay una clase en este día, solo actualizar si no es BLOQUEO
+            if dia in bloques_agrupados[clave_bloque]['clases']:
+                existing = bloques_agrupados[clave_bloque]['clases'][dia]
+                # Si la nueva no es BLOQUEO y la actual sí, reemplazar
+                if asignatura != 'BLOQUEO' and existing['codigo'] == 'BLOQUEO':
+                    bloques_agrupados[clave_bloque]['clases'][dia] = {
+                        'codigo': asignatura,
+                        'nombre': nombre
+                    }
+            else:
+                bloques_agrupados[clave_bloque]['clases'][dia] = {
+                    'codigo': asignatura,
+                    'nombre': nombre
+                }
+    
+    return bloques_agrupados
+
 def leer_excel_semanas(archivo_excel, semana_actual="S10"):
     """
     Lee el Excel con formato de tabla plana
-    Columnas: ASIGNATURA, NOMBRE, DIA, HORA INICIO, HORA FIN, SALA, S10, etc.
     """
     print(f"📖 Leyendo archivo: {archivo_excel}")
     df = pd.read_excel(archivo_excel)
@@ -22,59 +99,41 @@ def leer_excel_semanas(archivo_excel, semana_actual="S10"):
             print(f"📋 Columnas disponibles: {list(df.columns)}")
             return {}
     
-    # Filtrar por semana actual (columna como S10, S11, etc.)
+    # Filtrar por semana actual
     col_semana = semana_actual
     if col_semana in df.columns:
-        df = df[df[col_semana] == 1]
-        print(f"✅ Filtrado por {semana_actual}: {len(df)} registros activos")
+        df_activo = df[df[col_semana] == 1].copy()
+        print(f"✅ Filtrado por {semana_actual}: {len(df_activo)} registros activos")
     else:
         print(f"⚠️ No se encuentra la columna {semana_actual}, usando todos los registros")
+        df_activo = df.copy()
     
     # Agrupar por sala
     salas = {}
     
-    for sala in df['SALA'].unique():
+    for sala in df_activo['SALA'].unique():
         if pd.isna(sala):
             continue
-            
-        df_sala = df[df['SALA'] == sala]
-        print(f"  📌 Procesando sala: {sala} ({len(df_sala)} clases)")
         
-        horarios = {}
+        df_sala = df_activo[df_activo['SALA'] == sala]
+        print(f"  📌 Procesando sala: {sala} ({len(df_sala)} registros)")
         
-        for _, row in df_sala.iterrows():
-            dia = row['DIA']
-            hora_inicio = row['HORA INICIO']
-            hora_fin = row['HORA FIN']
-            asignatura = row['ASIGNATURA']
-            nombre = row['NOMBRE']
-            
-            # Formatear hora para mostrar
-            hora_str = f"{hora_inicio} - {hora_fin}"
-            
-            # Crear clave única
-            clave_hora = f"{hora_inicio}_{hora_fin}"
-            
-            if clave_hora not in horarios:
-                horarios[clave_hora] = {'hora': hora_str, 'clases': {}}
-            
-            horarios[clave_hora]['clases'][dia] = {
-                'codigo': asignatura,
-                'nombre': nombre
-            }
+        # Agrupar por bloques horarios
+        bloques = agrupar_bloques_horarios(df_sala)
         
-        salas[sala] = horarios
+        if bloques:
+            salas[sala] = bloques
     
     return salas
 
-def generar_html_sala(nombre_sala, horarios, output_path, semana_actual):
+def generar_html_sala(nombre_sala, bloques, output_path, semana_actual):
     """Genera la página HTML para una sala"""
     
     # Orden de días
     dias_orden = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado']
     
-    # Ordenar horas
-    horas_ordenadas = sorted(horarios.keys(), key=lambda x: int(x.split('_')[0].split(':')[0]))
+    # Ordenar bloques por hora
+    bloques_ordenados = sorted(bloques.values(), key=lambda x: x['hora_num'])
     
     # Construir tabla
     html_tabla = '<div style="overflow-x: auto;"><table class="horario-table">\n'
@@ -83,19 +142,25 @@ def generar_html_sala(nombre_sala, horarios, output_path, semana_actual):
         html_tabla += f'<th>{dia}</th>'
     html_tabla += '</tr></thead><tbody>\n'
     
-    for hora_key in horas_ordenadas:
-        hora_info = horarios[hora_key]
-        html_tabla += f'<tr><td class="hora-cell">{hora_info["hora"]}</td>\n'
+    for bloque in bloques_ordenados:
+        hora_str = f"{bloque['hora_inicio'][:5]} - {bloque['hora_fin'][:5]}"
+        html_tabla += f'<tr><td class="hora-cell">{hora_str}</td>\n'
         
         for dia in dias_orden:
-            if dia in hora_info['clases']:
-                clase = hora_info['clases'][dia]
-                html_tabla += f'''
-                <td class="clase-cell">
-                    <div class="codigo">{html.escape(clase['codigo'])}</div>
-                    <div class="nombre">{html.escape(clase['nombre'])}</div>
-                </td>
-                '''
+            if dia in bloque['clases']:
+                clase = bloque['clases'][dia]
+                # Si es BLOQUEO, mostrarlo como vacío o con texto especial
+                if clase['codigo'] == 'BLOQUEO' or clase['nombre'] == 'BLOQUEO':
+                    html_tabla += '<td class="vacio-cell">—</td>\n'
+                else:
+                    # Truncar nombre si es muy largo
+                    nombre_corto = clase['nombre'][:50] + '...' if len(clase['nombre']) > 50 else clase['nombre']
+                    html_tabla += f'''
+                    <td class="clase-cell">
+                        <div class="codigo">{html.escape(clase['codigo'])}</div>
+                        <div class="nombre">{html.escape(nombre_corto)}</div>
+                    </td>
+                    '''
             else:
                 html_tabla += '<td class="vacio-cell">—</td>\n'
         html_tabla += '</tr>\n'
@@ -157,7 +222,7 @@ def generar_html_sala(nombre_sala, horarios, output_path, semana_actual):
             top: 0;
         }}
         .horario-table td {{
-            border: 1px solid #e0e0e0;
+            border: 1px solid #ddd;
             padding: 10px;
             vertical-align: top;
         }}
@@ -169,7 +234,6 @@ def generar_html_sala(nombre_sala, horarios, output_path, semana_actual):
         }}
         .clase-cell {{
             background: #fafafa;
-            min-width: 180px;
         }}
         .codigo {{
             font-weight: bold;
@@ -177,14 +241,15 @@ def generar_html_sala(nombre_sala, horarios, output_path, semana_actual):
             font-size: 0.8rem;
         }}
         .nombre {{
-            font-weight: 600;
+            font-weight: 500;
             color: #2c3e50;
-            margin: 6px 0;
-            font-size: 0.85rem;
+            margin-top: 5px;
+            font-size: 0.8rem;
+            line-height: 1.3;
         }}
         .vacio-cell {{
-            background: #f5f5f5;
-            color: #bdc3c7;
+            background: #f9f9f9;
+            color: #ccc;
             text-align: center;
         }}
         .footer {{
@@ -196,23 +261,19 @@ def generar_html_sala(nombre_sala, horarios, output_path, semana_actual):
         }}
         @media (max-width: 768px) {{
             .horario-table th, .horario-table td {{
-                padding: 5px;
+                padding: 6px;
                 font-size: 0.7rem;
             }}
             .header h1 {{
                 font-size: 1.2rem;
             }}
+            .codigo {{ font-size: 0.65rem; }}
+            .nombre {{ font-size: 0.65rem; }}
         }}
         @media print {{
-            body {{
-                background: white;
-                padding: 0;
-            }}
-            .header {{
-                background: #2c3e50;
-                -webkit-print-color-adjust: exact;
-                print-color-adjust: exact;
-            }}
+            body {{ background: white; padding: 0; }}
+            .header {{ background: #2c3e50; -webkit-print-color-adjust: exact; print-color-adjust: exact; }}
+            .clase-cell {{ break-inside: avoid; }}
         }}
     </style>
 </head>
@@ -237,7 +298,7 @@ def generar_html_sala(nombre_sala, horarios, output_path, semana_actual):
         f.write(html_completo)
 
 def generar_index(salas, semana_actual, output_dir):
-    """Genera la página principal con todas las salas"""
+    """Genera la página principal"""
     
     index_html = f'''<!DOCTYPE html>
 <html lang="es">
@@ -264,7 +325,6 @@ def generar_index(salas, semana_actual, output_dir):
             text-align: center;
             color: white;
             margin-bottom: 30px;
-            font-size: 1.1rem;
         }}
         .semana-badge {{
             background: #e74c3c;
@@ -351,28 +411,24 @@ def generar_index(salas, semana_actual, output_dir):
 
 def main():
     print("=" * 60)
-    print("📖 GENERADOR DE HORARIOS - FORMATO TABLA PLANA")
+    print("📖 GENERADOR DE HORARIOS - CON AGRUPACIÓN DE BLOQUES")
     print("=" * 60)
     
     # Configuración
     ARCHIVO_EXCEL = 'horarios.xlsx'
-    SEMANA_ACTUAL = 'S10'  # Cambia esto según la semana que quieras mostrar
+    SEMANA_ACTUAL = 'S10'  # Cambia según la semana
     
-    # Verificar que el archivo existe
     if not os.path.exists(ARCHIVO_EXCEL):
-        print(f"❌ Error: No se encuentra el archivo {ARCHIVO_EXCEL}")
-        print("📄 Asegúrate de subir el archivo Excel con el formato correcto")
+        print(f"❌ Error: No se encuentra {ARCHIVO_EXCEL}")
         return
     
-    # Leer Excel
     salas = leer_excel_semanas(ARCHIVO_EXCEL, SEMANA_ACTUAL)
     
     if not salas:
         print("❌ No se encontraron salas con horarios")
-        print("Verifica que el Excel tenga las columnas: ASIGNATURA, NOMBRE, DIA, HORA INICIO, HORA FIN, SALA")
         return
     
-    print(f"\n✅ Encontradas {len(salas)} salas con horarios")
+    print(f"\n✅ Encontradas {len(salas)} salas")
     
     # Crear directorios
     output_dir = Path('output')
@@ -382,39 +438,26 @@ def main():
     salas_dir.mkdir(parents=True, exist_ok=True)
     qrs_dir.mkdir(parents=True, exist_ok=True)
     
-    # Generar páginas y QRs
-    for nombre_sala, horarios in salas.items():
-        print(f"\n📝 Generando: {nombre_sala}")
-        
-        # Limpiar nombre
+    # Generar archivos
+    for nombre_sala, bloques in salas.items():
+        print(f"📝 Generando: {nombre_sala}")
         nombre_archivo = re.sub(r'[^\w\s]', '', nombre_sala)
         nombre_archivo = re.sub(r'\s+', '_', nombre_archivo)
         
-        # Generar HTML
-        html_path = salas_dir / f'{nombre_archivo}.html'
-        generar_html_sala(nombre_sala, horarios, html_path, SEMANA_ACTUAL)
+        generar_html_sala(nombre_sala, bloques, salas_dir / f'{nombre_archivo}.html', SEMANA_ACTUAL)
         
-        # Generar QR
         url = f"https://qrhorariosu-collab.github.io/QRhorarios/salas/{nombre_archivo}.html"
         qr = qrcode.make(url)
         qr.save(qrs_dir / f'{nombre_archivo}.png')
-        print(f"   ✅ QR generado")
     
-    # Generar index
     generar_index(salas, SEMANA_ACTUAL, output_dir)
     
     print("\n" + "=" * 60)
     print("✅ ¡GENERACIÓN COMPLETADA!")
     print(f"📊 {len(salas)} salas procesadas")
-    print(f"📅 Semana actual: {SEMANA_ACTUAL}")
-    print("🌐 Sitio web: https://qrhorariosu-collab.github.io/QRhorarios/")
+    print(f"📅 Semana: {SEMANA_ACTUAL}")
+    print("🌐 https://qrhorariosu-collab.github.io/QRhorarios/")
     print("=" * 60)
-    
-    # Mostrar resumen de archivos creados
-    print("\n📂 Archivos generados:")
-    print(f"   - output/index.html")
-    print(f"   - output/salas/ ({len(salas)} archivos)")
-    print(f"   - output/qrs/ ({len(salas)} códigos QR)")
 
 if __name__ == "__main__":
     main()
