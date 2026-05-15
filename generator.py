@@ -247,7 +247,7 @@ def generar_index_con_estilo(salas, semana_actual, output_dir):
     """Genera una página principal PROTEGIDA con contraseña hasheada"""
     
     # Hash SHA-256 de la contraseña "Horariosu2026.."
-    PASSWORD_HASH = "b6e84e13927b15563f94251c54063d7cfc22cda7233db3bf36a492a7053e64b1"
+    PASSWORD_HASH = "dbc31a6cf1b0ab3e9df654ad2153c72194e0a64a4a29b4ea11c7c5611db2b950"
     
     # Construir el HTML completo
     html_completo = f'''<!DOCTYPE html>
