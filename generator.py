@@ -459,19 +459,28 @@ def generar_index_con_estilo(salas, semana_actual, output_dir):
 </style>
 
 <script>
-// Hash SHA-256 de la contraseña "Horariosu2026.."
-const PASSWORD = "admin2026";
+const PASSWORD_HASH = "{PASSWORD_HASH}";
 
-function verificarPassword() {
+async function verificarPassword() {{
     const inputPass = document.getElementById('password').value;
     
-    if (inputPass === PASSWORD) {
-        document.getElementById('loginBox').style.display = 'none';
-        document.getElementById('contenido').style.display = 'block';
-    } else {
-        document.getElementById('errorMsg').innerHTML = '❌ Contraseña incorrecta';
-    }
-}
+    try {{
+        const msgBuffer = new TextEncoder().encode(inputPass);
+        const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        
+        if (hashHex === PASSWORD_HASH) {{
+            document.getElementById('loginBox').style.display = 'none';
+            document.getElementById('contenido').style.display = 'block';
+        }} else {{
+            document.getElementById('errorMsg').innerHTML = '❌ Contraseña incorrecta';
+        }}
+    }} catch (error) {{
+        console.error("Error procesando el hash:", error);
+        document.getElementById('errorMsg').innerHTML = '❌ Error del sistema';
+    }}
+}}
 
 function filtrarSalas() {{
     let input = document.getElementById('buscador');
