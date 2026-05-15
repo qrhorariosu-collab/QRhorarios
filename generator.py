@@ -5,8 +5,11 @@ from pathlib import Path
 from datetime import datetime, time
 import html
 import os
-import base64
-from io import BytesIO
+import hashlib
+
+def generar_hash_sala(nombre_sala):
+    """Genera un hash corto para ofuscar la URL de la sala"""
+    return hashlib.md5(nombre_sala.encode()).hexdigest()[:8]
 
 def obtener_bloques_ocupados(hora_inicio, hora_fin):
     """Determina TODOS los bloques de 90 minutos que ocupa una clase"""
@@ -31,7 +34,7 @@ def obtener_bloques_ocupados(hora_inicio, hora_fin):
     
     return bloques_ocupados
 
-def leer_excel_semanas(archivo_excel, semana_actual="S10"):
+def leer_excel_semanas(archivo_excel, semana_actual="S11"):
     """Lee el Excel con formato de tabla plana"""
     print(f"📖 Leyendo archivo: {archivo_excel}")
     df = pd.read_excel(archivo_excel)
@@ -88,7 +91,7 @@ def leer_excel_semanas(archivo_excel, semana_actual="S10"):
     return salas
 
 def generar_html_sala(nombre_sala, horarios, output_path, semana_actual):
-    """Genera la página HTML para una sala"""
+    """Genera la página HTML para una sala (SIN enlaces a otras salas)"""
     
     dias_orden = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes']
     bloques_ordenados = sorted(horarios.values(), key=lambda x: x['orden'])
@@ -125,12 +128,15 @@ def generar_html_sala(nombre_sala, horarios, output_path, semana_actual):
     
     html_tabla += '</tbody></table></div>'
     
+    # Limpiar nombre para mostrar (quitar prefijos)
+    nombre_mostrar = nombre_sala.replace('PDSALA', 'SALA ')
+    
     html_completo = f'''<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Horario - {html.escape(nombre_sala)}</title>
+    <title>Horario - {html.escape(nombre_mostrar)}</title>
     <style>
         * {{ margin: 0; padding: 0; box-sizing: border-box; }}
         body {{
@@ -161,16 +167,6 @@ def generar_html_sala(nombre_sala, horarios, output_path, semana_actual):
             border-radius: 20px;
             font-size: 0.8rem;
             margin-top: 10px;
-        }}
-        .btn-volver {{
-            display: inline-block;
-            background: rgba(255,255,255,0.2);
-            color: white;
-            text-decoration: none;
-            padding: 8px 20px;
-            border-radius: 25px;
-            margin-top: 15px;
-            font-size: 0.9rem;
         }}
         .horario-table {{
             width: 100%;
@@ -207,22 +203,37 @@ def generar_html_sala(nombre_sala, horarios, output_path, semana_actual):
             font-size: 0.75rem;
             color: #7f8c8d;
         }}
+        .info-print {{
+            text-align: center;
+            margin-top: 20px;
+            padding: 10px;
+            background: #e8f4fd;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            color: #2c3e50;
+        }}
         @media (max-width: 768px) {{
             .horario-table th, .horario-table td {{ padding: 6px; font-size: 0.7rem; }}
             .header h1 {{ font-size: 1.2rem; }}
+        }}
+        @media print {{
+            body {{ background: white; padding: 0; }}
+            .header {{ background: #2c3e50; -webkit-print-color-adjust: exact; print-color-adjust: exact; }}
+            .info-print {{ display: none; }}
         }}
     </style>
 </head>
 <body>
 <div class="container">
     <div class="header">
-        <h1>📋 {html.escape(nombre_sala)}</h1>
+        <h1>📋 {html.escape(nombre_mostrar)}</h1>
         <p>Horario semanal actualizado</p>
         <div class="semana-badge">📅 {semana_actual}</div>
-        <br>
-        <a href="../index.html" class="btn-volver">← Volver a todas las salas</a>
     </div>
     {html_tabla}
+    <div class="info-print">
+        🔲 Escanea el código QR pegado en la puerta de esta sala para acceder siempre al horario actualizado
+    </div>
     <div class="footer">
         🗓️ Última actualización: {datetime.now().strftime('%d/%m/%Y %H:%M')}
     </div>
@@ -234,9 +245,17 @@ def generar_html_sala(nombre_sala, horarios, output_path, semana_actual):
         f.write(html_completo)
 
 def generar_index_con_estilo(salas, semana_actual, output_dir):
-    """Genera una página principal bonita con buscador y descarga de QRs"""
+    """Genera una página principal con buscador y mapeo de hashes"""
     
-    # Generar HTML con grid, buscador y botones de descarga
+    # Crear un diccionario de mapeo: hash -> nombre_real
+    mapeo_salas = {}
+    for nombre_sala in salas.keys():
+        hash_sala = generar_hash_sala(nombre_sala)
+        mapeo_salas[hash_sala] = nombre_sala
+    
+    # Guardar el mapeo para referencia (opcional, no se publica)
+    # Esto permite regenerar sin perder la relación
+    
     index_html = f'''<!DOCTYPE html>
 <html lang="es">
 <head>
@@ -306,7 +325,6 @@ def generar_index_con_estilo(salas, semana_actual, output_dir):
             overflow: hidden;
             box-shadow: 0 10px 30px rgba(0,0,0,0.2);
             transition: transform 0.3s, box-shadow 0.3s;
-            cursor: pointer;
         }}
         .card:hover {{
             transform: translateY(-5px);
@@ -406,10 +424,7 @@ def generar_index_con_estilo(salas, semana_actual, output_dir):
 '''
     
     for nombre_sala in salas.keys():
-        nombre_archivo = re.sub(r'[^\w\s]', '', nombre_sala)
-        nombre_archivo = re.sub(r'\s+', '_', nombre_archivo)
-        
-        # Limpiar nombre para mostrar
+        hash_sala = generar_hash_sala(nombre_sala)
         nombre_mostrar = nombre_sala.replace('PDSALA', 'SALA ')
         
         index_html += f'''
@@ -418,11 +433,11 @@ def generar_index_con_estilo(salas, semana_actual, output_dir):
                 <h3>{html.escape(nombre_mostrar)}</h3>
             </div>
             <div class="card-qr">
-                <img id="qr_{nombre_archivo}" src="qrs/{nombre_archivo}.png" alt="QR">
+                <img id="qr_{hash_sala}" src="qrs/{hash_sala}.png" alt="QR">
             </div>
             <div class="card-buttons">
-                <a href="salas/{nombre_archivo}.html" class="btn btn-ver">📅 Ver Horario</a>
-                <button class="btn btn-descargar" onclick="descargarQR('{nombre_archivo}', '{html.escape(nombre_mostrar)}')">📥 Descargar QR</button>
+                <a href="salas/{hash_sala}.html" class="btn btn-ver">📅 Ver Horario</a>
+                <button class="btn btn-descargar" onclick="descargarQR('{hash_sala}', '{html.escape(nombre_mostrar)}')">📥 Descargar QR</button>
             </div>
         </div>
 '''
@@ -457,8 +472,8 @@ function filtrarSalas() {{
     document.getElementById('mostrando').innerText = visible;
 }}
 
-function descargarQR(nombreArchivo, nombreSala) {{
-    let img = document.getElementById('qr_' + nombreArchivo);
+function descargarQR(hash, nombreSala) {{
+    let img = document.getElementById('qr_' + hash);
     let link = document.createElement('a');
     link.href = img.src;
     link.download = 'QR_' + nombreSala.replace(/ /g, '_') + '.png';
@@ -472,10 +487,12 @@ function descargarQR(nombreArchivo, nombreSala) {{
     
     with open(output_dir / 'index.html', 'w', encoding='utf-8') as f:
         f.write(index_html)
+    
+    return mapeo_salas
 
 def main():
     print("=" * 60)
-    print("📖 GENERADOR DE HORARIOS - VERSIÓN FINAL")
+    print("📖 GENERADOR DE HORARIOS - URLs OFUSCADAS")
     print("=" * 60)
     
     ARCHIVO_EXCEL = 'horarios.xlsx'
@@ -500,29 +517,38 @@ def main():
     salas_dir.mkdir(parents=True, exist_ok=True)
     qrs_dir.mkdir(parents=True, exist_ok=True)
     
-    # Generar página de cada sala
+    # Diccionario para guardar mapeo (útil para debugging)
+    mapeo = {}
+    
+    # Generar página de cada sala usando hash
     for nombre_sala, horarios in salas.items():
-        print(f"📝 Generando: {nombre_sala}")
-        nombre_archivo = re.sub(r'[^\w\s]', '', nombre_sala)
-        nombre_archivo = re.sub(r'\s+', '_', nombre_archivo)
+        hash_sala = generar_hash_sala(nombre_sala)
+        mapeo[hash_sala] = nombre_sala
+        print(f"📝 {nombre_sala} → {hash_sala}.html")
         
-        generar_html_sala(nombre_sala, horarios, salas_dir / f'{nombre_archivo}.html', SEMANA_ACTUAL)
+        generar_html_sala(nombre_sala, horarios, salas_dir / f'{hash_sala}.html', SEMANA_ACTUAL)
         
-        # Generar QR en alta calidad (tamaño más grande)
-        url = f"https://qrhorariosu-collab.github.io/QRhorarios/salas/{nombre_archivo}.html"
+        # Generar QR con URL ofuscada
+        url = f"https://qrhorariosu-collab.github.io/QRhorarios/salas/{hash_sala}.html"
         qr = qrcode.QRCode(box_size=10, border=2)
         qr.add_data(url)
         qr.make(fit=True)
         img = qr.make_image(fill_color="black", back_color="white")
-        img.save(qrs_dir / f'{nombre_archivo}.png')
+        img.save(qrs_dir / f'{hash_sala}.png')
     
-    # Generar index con buscador y descarga
+    # Guardar mapeo (archivo oculto, no visible desde la web)
+    with open(output_dir / '.mapeo.json', 'w', encoding='utf-8') as f:
+        import json
+        json.dump(mapeo, f, indent=2, ensure_ascii=False)
+    
+    # Generar index
     generar_index_con_estilo(salas, SEMANA_ACTUAL, output_dir)
     
     print("\n" + "=" * 60)
     print("✅ ¡GENERACIÓN COMPLETADA!")
     print(f"📊 {len(salas)} salas procesadas")
     print(f"🌐 https://qrhorariosu-collab.github.io/QRhorarios/")
+    print("🔒 URLs ofuscadas con hash MD5 (8 caracteres)")
     print("=" * 60)
 
 if __name__ == "__main__":
