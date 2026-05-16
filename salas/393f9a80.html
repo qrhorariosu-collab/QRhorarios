@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Horario - PASALA102</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            color: white;
+            padding: 25px;
+            text-align: center;
+        }
+        .header h1 { font-size: 1.8rem; margin-bottom: 5px; }
+        .semana-badge {
+            display: inline-block;
+            background: #e74c3c;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-top: 10px;
+        }
+        .horario-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+        .horario-table th {
+            background: #34495e;
+            color: white;
+            padding: 12px;
+        }
+        .horario-table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            vertical-align: top;
+        }
+        .hora-cell {
+            background: #ecf0f1;
+            font-weight: bold;
+            text-align: center;
+            width: 100px;
+        }
+        .clase-cell { background: #fafafa; }
+        .clase-cell.multibloque { background: #e8f4fd; border-left: 3px solid #3498db; }
+        .codigo { font-weight: bold; color: #e74c3c; font-size: 0.8rem; }
+        .nombre { font-weight: 500; color: #2c3e50; margin-top: 5px; font-size: 0.8rem; }
+        .horario-ext { font-size: 0.7rem; color: #e67e22; margin-left: 5px; }
+        .bloqueo-cell { background: #fff3cd; color: #856404; text-align: center; font-weight: bold; }
+        .vacio-cell { background: #f9f9f9; color: #ccc; text-align: center; }
+        .footer {
+            background: #ecf0f1;
+            padding: 15px;
+            text-align: center;
+            font-size: 0.75rem;
+            color: #7f8c8d;
+        }
+        .info-print {
+            text-align: center;
+            margin-top: 20px;
+            padding: 10px;
+            background: #e8f4fd;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            color: #2c3e50;
+        }
+        @media (max-width: 768px) {
+            .horario-table th, .horario-table td { padding: 6px; font-size: 0.7rem; }
+            .header h1 { font-size: 1.2rem; }
+        }
+        @media print {
+            body { background: white; padding: 0; }
+            .header { background: #2c3e50; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .info-print { display: none; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>📋 PASALA102</h1>
+        <p>Horario semanal actualizado</p>
+        <div class="semana-badge">📅 S11</div>
+    </div>
+    <div style="overflow-x: auto;"><table class="horario-table">
+<thead><tr><th>Horario</th><th>Lunes</th><th>Martes</th><th>Miércoles</th><th>Jueves</th><th>Viernes</th></thead><tbody>
+<tr><td class="hora-cell">08:10-09:40</td>
+
+                    <td class="clase-cell">
+                        <div class="codigo">QUIM123-18</div>
+                        <div class="nombre">QUÍMICA ORGÁNICA<span class="horario-ext"></span></div>
+                    </td>
+                    
+                    <td class="clase-cell">
+                        <div class="codigo">QUIM123-18</div>
+                        <div class="nombre">QUÍMICA ORGÁNICA<span class="horario-ext"></span></div>
+                    </td>
+                    
+                    <td class="clase-cell">
+                        <div class="codigo">IGAP206-23</div>
+                        <div class="nombre">ENFOQUE INTERCULTURAL PARA LA  ACCI...<span class="horario-ext"></span></div>
+                    </td>
+                    
+                    <td class="clase-cell">
+                        <div class="codigo">QFAR125-18</div>
+                        <div class="nombre">TALLER DE PROYECTOS FARMACÉUTICOS<span class="horario-ext"></span></div>
+                    </td>
+                    
+                    <td class="clase-cell">
+                        <div class="codigo">ICED066-18</div>
+                        <div class="nombre">EDUCACIÓN, CULTURA Y NATURALEZA<span class="horario-ext"></span></div>
+                    </td>
+                    </tr>
+<tr><td class="hora-cell">09:50-11:20</td>
+
+                    <td class="clase-cell">
+                        <div class="codigo">ADMI055-18</div>
+                        <div class="nombre">TALLER DE EMPRESAS Y ENTORNO PROFES...<span class="horario-ext"></span></div>
+                    </td>
+                    
+                    <td class="clase-cell">
+                        <div class="codigo">QUIM065-17</div>
+                        <div class="nombre">QUÍMICA GENERAL<span class="horario-ext"></span></div>
+                    </td>
+                    
+                    <td class="clase-cell">
+                        <div class="codigo">ICMO080-25</div>
+                        <div class="nombre">ESTUDIOS SOBRE LA OCUPACIÓN<span class="horario-ext"></span></div>
+                    </td>
+                    
+                    <td class="clase-cell">
+                        <div class="codigo">DPUB110-23</div>
+                        <div class="nombre">DERECHOS FUNDAMENTALES<span class="horario-ext"></span></div>
+                    </td>
+                    <td class="vacio-cell">—</td>
+</tr>
+<tr><td class="hora-cell">11:30-13:00</td>
+
+                    <td class="clase-cell">
+                        <div class="codigo">QUIM129-18</div>
+                        <div class="nombre">ANÁLISIS QUÍMICO<span class="horario-ext"></span></div>
+                    </td>
+                    
+                    <td class="clase-cell">
+                        <div class="codigo">QUIM129-18</div>
+                        <div class="nombre">ANÁLISIS QUÍMICO<span class="horario-ext"></span></div>
+                    </td>
+                    
+                    <td class="clase-cell">
+                        <div class="codigo">QUIM007-14</div>
+                        <div class="nombre">QUIMICA GENERAL<span class="horario-ext"></span></div>
+                    </td>
+                    
+                    <td class="clase-cell">
+                        <div class="codigo">FARM151-14</div>
+                        <div class="nombre">FISIOLOGÍA VETERINARIA<span class="horario-ext"></span></div>
+                    </td>
+                    
+                    <td class="clase-cell">
+                        <div class="codigo">FARM151-14</div>
+                        <div class="nombre">FISIOLOGÍA VETERINARIA<span class="horario-ext"></span></div>
+                    </td>
+                    </tr>
+<tr><td class="hora-cell">14:10-15:40</td>
+<td class="vacio-cell">—</td>
+
+                    <td class="clase-cell">
+                        <div class="codigo">HIPA130-17</div>
+                        <div class="nombre">PATOLOGÍA GENERAL<span class="horario-ext"></span></div>
+                    </td>
+                    
+                    <td class="clase-cell">
+                        <div class="codigo">QUIM050-16</div>
+                        <div class="nombre">QUIMICA GENERAL<span class="horario-ext"></span></div>
+                    </td>
+                    
+                    <td class="clase-cell multibloque">
+                        <div class="codigo">EAGR174-14</div>
+                        <div class="nombre">DESARROLLO RURAL<span class="horario-ext"> (14:10-16:35)</span></div>
+                    </td>
+                    
+                    <td class="clase-cell">
+                        <div class="codigo">QUIM045-16</div>
+                        <div class="nombre">BASES DE QUÍMICA<span class="horario-ext"></span></div>
+                    </td>
+                    </tr>
+<tr><td class="hora-cell">15:50-17:20</td>
+<td class="vacio-cell">—</td>
+
+                    <td class="clase-cell">
+                        <div class="codigo">SALP082-19</div>
+                        <div class="nombre">ADMINISTRACIÓN DE SERVICIOS DE SALU...<span class="horario-ext"></span></div>
+                    </td>
+                    
+                    <td class="clase-cell">
+                        <div class="codigo">DPRI115-23</div>
+                        <div class="nombre">ACTO JURÍDICO<span class="horario-ext"></span></div>
+                    </td>
+                    
+                    <td class="clase-cell multibloque">
+                        <div class="codigo">EAGR174-14</div>
+                        <div class="nombre">DESARROLLO RURAL<span class="horario-ext"> (14:10-16:35)</span></div>
+                    </td>
+                    
+                    <td class="clase-cell">
+                        <div class="codigo">ADMI114-14</div>
+                        <div class="nombre">RELACIONES LABORALES Y MERCADO DEL ...<span class="horario-ext"></span></div>
+                    </td>
+                    </tr>
+<tr><td class="hora-cell">17:30-19:00</td>
+
+                    <td class="clase-cell">
+                        <div class="codigo">QUIM050-16</div>
+                        <div class="nombre">QUIMICA GENERAL<span class="horario-ext"></span></div>
+                    </td>
+                    <td class="vacio-cell">—</td>
+
+                    <td class="clase-cell multibloque">
+                        <div class="codigo">PSVE155-14</div>
+                        <div class="nombre">GENÉTICA<span class="horario-ext"> (17:30-19:55)</span></div>
+                    </td>
+                    <td class="vacio-cell">—</td>
+
+                    <td class="clase-cell">
+                        <div class="codigo">PSIQ083-19</div>
+                        <div class="nombre">PSICOLOGÍA SOCIAL<span class="horario-ext"></span></div>
+                    </td>
+                    </tr>
+<tr><td class="hora-cell">19:10-20:40</td>
+<td class="vacio-cell">—</td>
+<td class="vacio-cell">—</td>
+
+                    <td class="clase-cell multibloque">
+                        <div class="codigo">PSVE155-14</div>
+                        <div class="nombre">GENÉTICA<span class="horario-ext"> (17:30-19:55)</span></div>
+                    </td>
+                    <td class="vacio-cell">—</td>
+<td class="vacio-cell">—</td>
+</tr>
+</tbody></table></div>
+    <div class="info-print">
+        🔲 Escanea el código QR pegado en la puerta de esta sala para acceder siempre al horario actualizado
+    </div>
+    <div class="footer">
+        🗓️ Última actualización: 16/05/2026 01:10
+    </div>
+</div>
+</body>
+</html>

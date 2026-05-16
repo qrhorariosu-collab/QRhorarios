@@ -1,0 +1,2832 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Acceso Restringido - Horarios</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .login-box {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+        }
+        .login-box h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+        .login-box input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            font-size: 1rem;
+        }
+        .login-box button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 10px;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .login-box button:hover {
+            background: #2980b9;
+        }
+        .error {
+            color: #e74c3c;
+            margin-top: 10px;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+<div class="login-box" id="loginBox">
+    <h2>🔒 Acceso Restringido</h2>
+    <p>Ingresa la contraseña para ver los horarios</p>
+    <input type="password" id="password" placeholder="Contraseña" onkeypress="if(event.key==='Enter') verificarPassword()">
+    <button onclick="verificarPassword()">Acceder</button>
+    <div id="errorMsg" class="error"></div>
+</div>
+
+<div id="contenido" style="display:none;">
+    <div class="container">
+        <div class="header">
+            <h1>🏫 Sistema de Horarios por Sala</h1>
+            <p>Selecciona una sala para ver su horario semanal</p>
+            <div class="semana-badge">📅 Semana S11</div>
+        </div>
+        
+        <div class="buscador">
+            <input type="text" id="buscador" placeholder="🔍 Buscar sala..." onkeyup="filtrarSalas()">
+        </div>
+        
+        <div class="stats" id="stats">
+            Mostrando <span id="mostrando">200</span> de 200 salas
+        </div>
+        
+        <div class="grid" id="gridSalas">
+
+            <div class="card" data-nombre="1fs8multip">
+                <div class="card-header">
+                    <h3>1FS8MULTIP</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_d9893e6b" src="qrs/d9893e6b.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/d9893e6b.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('d9893e6b', '1FS8MULTIP')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="agaudwester">
+                <div class="card-header">
+                    <h3>AGAUDWESTER</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_f84ee0d8" src="qrs/f84ee0d8.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/f84ee0d8.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('f84ee0d8', 'AGAUDWESTER')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="ageeaa">
+                <div class="card-header">
+                    <h3>AGEEAA</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_4b2a66db" src="qrs/4b2a66db.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/4b2a66db.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('4b2a66db', 'AGEEAA')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="aglab1">
+                <div class="card-header">
+                    <h3>AGLAB1</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_304f9178" src="qrs/304f9178.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/304f9178.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('304f9178', 'AGLAB1')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="aglabain2">
+                <div class="card-header">
+                    <h3>AGLABAIN2</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_c536e155" src="qrs/c536e155.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/c536e155.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('c536e155', 'AGLABAIN2')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="aglbiomol">
+                <div class="card-header">
+                    <h3>AGLBIOMOL</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_5a3c365a" src="qrs/5a3c365a.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/5a3c365a.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('5a3c365a', 'AGLBIOMOL')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="aglcomp">
+                <div class="card-header">
+                    <h3>AGLCOMP</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_41482412" src="qrs/41482412.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/41482412.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('41482412', 'AGLCOMP')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="aglmicdoc">
+                <div class="card-header">
+                    <h3>AGLMICDOC</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_6c02d419" src="qrs/6c02d419.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/6c02d419.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('6c02d419', 'AGLMICDOC')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="aglquidoc">
+                <div class="card-header">
+                    <h3>AGLQUIDOC</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_a7132c35" src="qrs/a7132c35.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/a7132c35.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('a7132c35', 'AGLQUIDOC')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="agsala2">
+                <div class="card-header">
+                    <h3>AGSALA2</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_10007239" src="qrs/10007239.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/10007239.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('10007239', 'AGSALA2')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="agsala3">
+                <div class="card-header">
+                    <h3>AGSALA3</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_2e6537be" src="qrs/2e6537be.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/2e6537be.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('2e6537be', 'AGSALA3')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="agsala4">
+                <div class="card-header">
+                    <h3>AGSALA4</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_b529d622" src="qrs/b529d622.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/b529d622.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('b529d622', 'AGSALA4')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="agsala6">
+                <div class="card-header">
+                    <h3>AGSALA6</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_f39abb51" src="qrs/f39abb51.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/f39abb51.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('f39abb51', 'AGSALA6')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="agsala7">
+                <div class="card-header">
+                    <h3>AGSALA7</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_90873b14" src="qrs/90873b14.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/90873b14.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('90873b14', 'AGSALA7')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="agsosbaloc">
+                <div class="card-header">
+                    <h3>AGSOSBALOC</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_54cf3bdf" src="qrs/54cf3bdf.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/54cf3bdf.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('54cf3bdf', 'AGSOSBALOC')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="amlis">
+                <div class="card-header">
+                    <h3>AMLIS</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_760b020f" src="qrs/760b020f.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/760b020f.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('760b020f', 'AMLIS')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="amsalaa">
+                <div class="card-header">
+                    <h3>AMSALAA</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_7d7a4f6f" src="qrs/7d7a4f6f.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/7d7a4f6f.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('7d7a4f6f', 'AMSALAA')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="aterka1">
+                <div class="card-header">
+                    <h3>ATERKA1</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_ddffc015" src="qrs/ddffc015.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/ddffc015.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('ddffc015', 'ATERKA1')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="aterka2">
+                <div class="card-header">
+                    <h3>ATERKA2</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_c3751049" src="qrs/c3751049.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/c3751049.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('c3751049', 'ATERKA2')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="aterka3">
+                <div class="card-header">
+                    <h3>ATERKA3</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_bda03dad" src="qrs/bda03dad.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/bda03dad.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('bda03dad', 'ATERKA3')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="aterka4">
+                <div class="card-header">
+                    <h3>ATERKA4</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_eeb6d943" src="qrs/eeb6d943.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/eeb6d943.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('eeb6d943', 'ATERKA4')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="aterka5">
+                <div class="card-header">
+                    <h3>ATERKA5</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_6eb68147" src="qrs/6eb68147.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/6eb68147.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('6eb68147', 'ATERKA5')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="aud002">
+                <div class="card-header">
+                    <h3>AUD002</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_a12dad67" src="qrs/a12dad67.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/a12dad67.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('a12dad67', 'AUD002')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="aud003">
+                <div class="card-header">
+                    <h3>AUD003</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_b121f509" src="qrs/b121f509.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/b121f509.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('b121f509', 'AUD003')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="aud004">
+                <div class="card-header">
+                    <h3>AUD004</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_59be1376" src="qrs/59be1376.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/59be1376.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('59be1376', 'AUD004')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="avtartmedaud">
+                <div class="card-header">
+                    <h3>AVTARTMEDAUD</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_822dd61c" src="qrs/822dd61c.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/822dd61c.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('822dd61c', 'AVTARTMEDAUD')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="avtaudiov">
+                <div class="card-header">
+                    <h3>AVTAUDIOV</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_18c1a2a8" src="qrs/18c1a2a8.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/18c1a2a8.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('18c1a2a8', 'AVTAUDIOV')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="avtdibujo">
+                <div class="card-header">
+                    <h3>AVTDIBUJO</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_100e8311" src="qrs/100e8311.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/100e8311.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('100e8311', 'AVTDIBUJO')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="avtescult">
+                <div class="card-header">
+                    <h3>AVTESCULT</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_9e406163" src="qrs/9e406163.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/9e406163.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('9e406163', 'AVTESCULT')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="avtfotogr">
+                <div class="card-header">
+                    <h3>AVTFOTOGR</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_1f7333cd" src="qrs/1f7333cd.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/1f7333cd.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('1f7333cd', 'AVTFOTOGR')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="avtgrabad">
+                <div class="card-header">
+                    <h3>AVTGRABAD</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_52983c0a" src="qrs/52983c0a.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/52983c0a.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('52983c0a', 'AVTGRABAD')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="avtpintur">
+                <div class="card-header">
+                    <h3>AVTPINTUR</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_e9637992" src="qrs/e9637992.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/e9637992.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('e9637992', 'AVTPINTUR')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="bhematol">
+                <div class="card-header">
+                    <h3>BHEMATOL</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_92a74625" src="qrs/92a74625.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/92a74625.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('92a74625', 'BHEMATOL')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="bklejterap">
+                <div class="card-header">
+                    <h3>BKLEJTERAP</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_52fd8453" src="qrs/52fd8453.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/52fd8453.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('52fd8453', 'BKLEJTERAP')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="bksala101">
+                <div class="card-header">
+                    <h3>BKSALA101</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_73ca6ffc" src="qrs/73ca6ffc.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/73ca6ffc.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('73ca6ffc', 'BKSALA101')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="bksala102">
+                <div class="card-header">
+                    <h3>BKSALA102</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_946259cb" src="qrs/946259cb.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/946259cb.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('946259cb', 'BKSALA102')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="bksalaort">
+                <div class="card-header">
+                    <h3>BKSALAORT</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_ad4af07a" src="qrs/ad4af07a.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/ad4af07a.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('ad4af07a', 'BKSALAORT')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="bmsprod">
+                <div class="card-header">
+                    <h3>BMSPROD</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_a88f1fca" src="qrs/a88f1fca.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/a88f1fca.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('a88f1fca', 'BMSPROD')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="boclin">
+                <div class="card-header">
+                    <h3>BOCLIN</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_5a9cc3d6" src="qrs/5a9cc3d6.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/5a9cc3d6.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('5a9cc3d6', 'BOCLIN')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="bosala1">
+                <div class="card-header">
+                    <h3>BOSALA1</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_f50e2e82" src="qrs/f50e2e82.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/f50e2e82.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('f50e2e82', 'BOSALA1')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="bosala2">
+                <div class="card-header">
+                    <h3>BOSALA2</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_9974a8d7" src="qrs/9974a8d7.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/9974a8d7.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('9974a8d7', 'BOSALA2')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="bossim">
+                <div class="card-header">
+                    <h3>BOSSIM</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_ccbdfac6" src="qrs/ccbdfac6.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/ccbdfac6.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('ccbdfac6', 'BOSSIM')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="caaud005">
+                <div class="card-header">
+                    <h3>CAAUD005</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_afb9735d" src="qrs/afb9735d.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/afb9735d.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('afb9735d', 'CAAUD005')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="casala1">
+                <div class="card-header">
+                    <h3>CASALA1</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_8703c571" src="qrs/8703c571.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/8703c571.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('8703c571', 'CASALA1')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="casala2">
+                <div class="card-header">
+                    <h3>CASALA2</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_bfbf00e7" src="qrs/bfbf00e7.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/bfbf00e7.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('bfbf00e7', 'CASALA2')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="casensayo">
+                <div class="card-header">
+                    <h3>CASENSAYO</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_5b3e140c" src="qrs/5b3e140c.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/5b3e140c.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('5b3e140c', 'CASENSAYO')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="casmonpost">
+                <div class="card-header">
+                    <h3>CASMONPOST</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_7b8056a8" src="qrs/7b8056a8.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/7b8056a8.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('7b8056a8', 'CASMONPOST')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="cfarmvirt">
+                <div class="card-header">
+                    <h3>CFARMVIRT</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_d3dd1e28" src="qrs/d3dd1e28.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/d3dd1e28.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('d3dd1e28', 'CFARMVIRT')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="clcompcfm">
+                <div class="card-header">
+                    <h3>CLCOMPCFM</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_fd332cd5" src="qrs/fd332cd5.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/fd332cd5.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('fd332cd5', 'CLCOMPCFM')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="clsimul">
+                <div class="card-header">
+                    <h3>CLSIMUL</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_d982730d" src="qrs/d982730d.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/d982730d.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('d982730d', 'CLSIMUL')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="cnpesas">
+                <div class="card-header">
+                    <h3>CNPESAS</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_517ca250" src="qrs/517ca250.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/517ca250.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('517ca250', 'CNPESAS')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="cs401">
+                <div class="card-header">
+                    <h3>CS401</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_550a1983" src="qrs/550a1983.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/550a1983.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('550a1983', 'CS401')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="cs402">
+                <div class="card-header">
+                    <h3>CS402</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_3fb828ed" src="qrs/3fb828ed.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/3fb828ed.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('3fb828ed', 'CS402')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="cs406">
+                <div class="card-header">
+                    <h3>CS406</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_321b4566" src="qrs/321b4566.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/321b4566.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('321b4566', 'CS406')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="csala1">
+                <div class="card-header">
+                    <h3>CSALA1</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_2681173e" src="qrs/2681173e.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/2681173e.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('2681173e', 'CSALA1')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="csala2">
+                <div class="card-header">
+                    <h3>CSALA2</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_3ce6fd3a" src="qrs/3ce6fd3a.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/3ce6fd3a.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('3ce6fd3a', 'CSALA2')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="csala3">
+                <div class="card-header">
+                    <h3>CSALA3</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_04e5dbe9" src="qrs/04e5dbe9.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/04e5dbe9.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('04e5dbe9', 'CSALA3')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="csala4">
+                <div class="card-header">
+                    <h3>CSALA4</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_ef71cb2e" src="qrs/ef71cb2e.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/ef71cb2e.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('ef71cb2e', 'CSALA4')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="csala5">
+                <div class="card-header">
+                    <h3>CSALA5</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_298436cb" src="qrs/298436cb.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/298436cb.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('298436cb', 'CSALA5')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="csala6">
+                <div class="card-header">
+                    <h3>CSALA6</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_f5c95a64" src="qrs/f5c95a64.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/f5c95a64.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('f5c95a64', 'CSALA6')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="cscalaf">
+                <div class="card-header">
+                    <h3>CSCALAF</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_78e558e3" src="qrs/78e558e3.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/78e558e3.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('78e558e3', 'CSCALAF')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="ecedhac1">
+                <div class="card-header">
+                    <h3>ECEDHAC1</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_39c39550" src="qrs/39c39550.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/39c39550.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('39c39550', 'ECEDHAC1')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="est_miraflores">
+                <div class="card-header">
+                    <h3>EST_MIRAFLORES</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_e66609c7" src="qrs/e66609c7.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/e66609c7.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('e66609c7', 'EST_MIRAFLORES')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="f1sala1">
+                <div class="card-header">
+                    <h3>F1SALA1</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_80e7ff95" src="qrs/80e7ff95.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/80e7ff95.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('80e7ff95', 'F1SALA1')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="f1sala11">
+                <div class="card-header">
+                    <h3>F1SALA11</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_d791ac3e" src="qrs/d791ac3e.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/d791ac3e.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('d791ac3e', 'F1SALA11')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="f1sala2">
+                <div class="card-header">
+                    <h3>F1SALA2</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_ad7a4edd" src="qrs/ad7a4edd.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/ad7a4edd.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('ad7a4edd', 'F1SALA2')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="f1sala3">
+                <div class="card-header">
+                    <h3>F1SALA3</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_22e64c7a" src="qrs/22e64c7a.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/22e64c7a.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('22e64c7a', 'F1SALA3')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="f1sala4">
+                <div class="card-header">
+                    <h3>F1SALA4</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_73f51969" src="qrs/73f51969.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/73f51969.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('73f51969', 'F1SALA4')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="f1sala5">
+                <div class="card-header">
+                    <h3>F1SALA5</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_078ce177" src="qrs/078ce177.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/078ce177.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('078ce177', 'F1SALA5')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="f1sala6">
+                <div class="card-header">
+                    <h3>F1SALA6</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_1982d542" src="qrs/1982d542.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/1982d542.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('1982d542', 'F1SALA6')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="f1sala7">
+                <div class="card-header">
+                    <h3>F1SALA7</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_a50fa7ce" src="qrs/a50fa7ce.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/a50fa7ce.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('a50fa7ce', 'F1SALA7')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="f1sala9">
+                <div class="card-header">
+                    <h3>F1SALA9</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_43baefd4" src="qrs/43baefd4.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/43baefd4.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('43baefd4', 'F1SALA9')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="f1shum1">
+                <div class="card-header">
+                    <h3>F1SHUM1</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_97297f55" src="qrs/97297f55.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/97297f55.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('97297f55', 'F1SHUM1')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="f2estaud">
+                <div class="card-header">
+                    <h3>F2ESTAUD</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_cd36cb5a" src="qrs/cd36cb5a.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/cd36cb5a.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('cd36cb5a', 'F2ESTAUD')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="f2estrad">
+                <div class="card-header">
+                    <h3>F2ESTRAD</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_f999770e" src="qrs/f999770e.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/f999770e.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('f999770e', 'F2ESTRAD')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="f2sala1">
+                <div class="card-header">
+                    <h3>F2SALA1</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_06068f1a" src="qrs/06068f1a.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/06068f1a.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('06068f1a', 'F2SALA1')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="f2sala2">
+                <div class="card-header">
+                    <h3>F2SALA2</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_8135ed80" src="qrs/8135ed80.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/8135ed80.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('8135ed80', 'F2SALA2')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="f2sala3">
+                <div class="card-header">
+                    <h3>F2SALA3</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_1687d3b4" src="qrs/1687d3b4.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/1687d3b4.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('1687d3b4', 'F2SALA3')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="f2sala4">
+                <div class="card-header">
+                    <h3>F2SALA4</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_b438a90e" src="qrs/b438a90e.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/b438a90e.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('b438a90e', 'F2SALA4')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="f2sala5">
+                <div class="card-header">
+                    <h3>F2SALA5</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_9cf41eef" src="qrs/9cf41eef.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/9cf41eef.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('9cf41eef', 'F2SALA5')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="f2sala6">
+                <div class="card-header">
+                    <h3>F2SALA6</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_bcffa0f5" src="qrs/bcffa0f5.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/bcffa0f5.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('bcffa0f5', 'F2SALA6')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="f2sala7">
+                <div class="card-header">
+                    <h3>F2SALA7</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_527c28ca" src="qrs/527c28ca.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/527c28ca.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('527c28ca', 'F2SALA7')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="f3sala11">
+                <div class="card-header">
+                    <h3>F3SALA11</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_1c55b2e3" src="qrs/1c55b2e3.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/1c55b2e3.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('1c55b2e3', 'F3SALA11')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="fame_sm">
+                <div class="card-header">
+                    <h3>FAME_SM</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_8c917889" src="qrs/8c917889.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/8c917889.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('8c917889', 'FAME_SM')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="fl226">
+                <div class="card-header">
+                    <h3>FL226</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_47223d78" src="qrs/47223d78.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/47223d78.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('47223d78', 'FL226')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="fl227">
+                <div class="card-header">
+                    <h3>FL227</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_1b666e2c" src="qrs/1b666e2c.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/1b666e2c.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('1b666e2c', 'FL227')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="fl311">
+                <div class="card-header">
+                    <h3>FL311</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_7c0be08e" src="qrs/7c0be08e.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/7c0be08e.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('7c0be08e', 'FL311')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="flcomp">
+                <div class="card-header">
+                    <h3>FLCOMP</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_e93cdc9a" src="qrs/e93cdc9a.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/e93cdc9a.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('e93cdc9a', 'FLCOMP')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="fmsala223">
+                <div class="card-header">
+                    <h3>FMSALA223</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_2cecf303" src="qrs/2cecf303.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/2cecf303.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('2cecf303', 'FMSALA223')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="fmsala224">
+                <div class="card-header">
+                    <h3>FMSALA224</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_01140965" src="qrs/01140965.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/01140965.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('01140965', 'FMSALA224')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="fmsala426">
+                <div class="card-header">
+                    <h3>FMSALA426</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_4c4182c0" src="qrs/4c4182c0.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/4c4182c0.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('4c4182c0', 'FMSALA426')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="foescuela1">
+                <div class="card-header">
+                    <h3>FOESCUELA1</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_f6cc75bd" src="qrs/f6cc75bd.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/f6cc75bd.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('f6cc75bd', 'FOESCUELA1')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="foescuela2">
+                <div class="card-header">
+                    <h3>FOESCUELA2</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_ff8e88b6" src="qrs/ff8e88b6.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/ff8e88b6.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('ff8e88b6', 'FOESCUELA2')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="foibos">
+                <div class="card-header">
+                    <h3>FOIBOS</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_79f3c6c6" src="qrs/79f3c6c6.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/79f3c6c6.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('79f3c6c6', 'FOIBOS')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="folcomp">
+                <div class="card-header">
+                    <h3>FOLCOMP</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_f3ab57c2" src="qrs/f3ab57c2.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/f3ab57c2.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('f3ab57c2', 'FOLCOMP')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="folsecad">
+                <div class="card-header">
+                    <h3>FOLSECAD</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_10f52bf2" src="qrs/10f52bf2.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/10f52bf2.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('10f52bf2', 'FOLSECAD')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="fsala1">
+                <div class="card-header">
+                    <h3>FSALA1</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_caa81ff7" src="qrs/caa81ff7.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/caa81ff7.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('caa81ff7', 'FSALA1')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="fsala101">
+                <div class="card-header">
+                    <h3>FSALA101</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_7488ca78" src="qrs/7488ca78.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/7488ca78.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('7488ca78', 'FSALA101')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="fsala2">
+                <div class="card-header">
+                    <h3>FSALA2</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_fb1c9a12" src="qrs/fb1c9a12.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/fb1c9a12.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('fb1c9a12', 'FSALA2')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="fsala210">
+                <div class="card-header">
+                    <h3>FSALA210</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_225f7d30" src="qrs/225f7d30.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/225f7d30.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('225f7d30', 'FSALA210')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="fsala4">
+                <div class="card-header">
+                    <h3>FSALA4</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_eda47b36" src="qrs/eda47b36.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/eda47b36.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('eda47b36', 'FSALA4')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="fsala5">
+                <div class="card-header">
+                    <h3>FSALA5</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_3899da5e" src="qrs/3899da5e.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/3899da5e.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('3899da5e', 'FSALA5')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="fsala6">
+                <div class="card-header">
+                    <h3>FSALA6</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_0ca66d15" src="qrs/0ca66d15.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/0ca66d15.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('0ca66d15', 'FSALA6')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="fsdocanhu">
+                <div class="card-header">
+                    <h3>FSDOCANHU</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_4cca017d" src="qrs/4cca017d.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/4cca017d.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('4cca017d', 'FSDOCANHU')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="fsest105">
+                <div class="card-header">
+                    <h3>FSEST105</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_99b3e944" src="qrs/99b3e944.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/99b3e944.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('99b3e944', 'FSEST105')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="fsest325">
+                <div class="card-header">
+                    <h3>FSEST325</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_e63454ab" src="qrs/e63454ab.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/e63454ab.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('e63454ab', 'FSEST325')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="gimmir">
+                <div class="card-header">
+                    <h3>GIMMIR</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_8476e9c8" src="qrs/8476e9c8.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/8476e9c8.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('8476e9c8', 'GIMMIR')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="gimteja1">
+                <div class="card-header">
+                    <h3>GIMTEJA1</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_b82e345a" src="qrs/b82e345a.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/b82e345a.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('b82e345a', 'GIMTEJA1')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="gimteja2">
+                <div class="card-header">
+                    <h3>GIMTEJA2</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_3f9c77ef" src="qrs/3f9c77ef.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/3f9c77ef.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('3f9c77ef', 'GIMTEJA2')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="iaudi">
+                <div class="card-header">
+                    <h3>IAUDI</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_ebd90c4d" src="qrs/ebd90c4d.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/ebd90c4d.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('ebd90c4d', 'IAUDI')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="is6302">
+                <div class="card-header">
+                    <h3>IS6302</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_a012ef57" src="qrs/a012ef57.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/a012ef57.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('a012ef57', 'IS6302')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="is6303">
+                <div class="card-header">
+                    <h3>IS6303</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_1577b4bb" src="qrs/1577b4bb.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/1577b4bb.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('1577b4bb', 'IS6303')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="is6304">
+                <div class="card-header">
+                    <h3>IS6304</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_70d1077d" src="qrs/70d1077d.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/70d1077d.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('70d1077d', 'IS6304')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="is6305">
+                <div class="card-header">
+                    <h3>IS6305</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_b5c4ad95" src="qrs/b5c4ad95.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/b5c4ad95.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('b5c4ad95', 'IS6305')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="is6306">
+                <div class="card-header">
+                    <h3>IS6306</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_3b910d0d" src="qrs/3b910d0d.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/3b910d0d.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('3b910d0d', 'IS6306')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="is6308">
+                <div class="card-header">
+                    <h3>IS6308</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_27ee4e00" src="qrs/27ee4e00.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/27ee4e00.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('27ee4e00', 'IS6308')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="is6310">
+                <div class="card-header">
+                    <h3>IS6310</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_5cdbeb53" src="qrs/5cdbeb53.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/5cdbeb53.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('5cdbeb53', 'IS6310')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="isala208">
+                <div class="card-header">
+                    <h3>ISALA208</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_53f9329c" src="qrs/53f9329c.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/53f9329c.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('53f9329c', 'ISALA208')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="jsalalitig">
+                <div class="card-header">
+                    <h3>JSALALITIG</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_b0f85919" src="qrs/b0f85919.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/b0f85919.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('b0f85919', 'JSALALITIG')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="jsalaopt">
+                <div class="card-header">
+                    <h3>JSALAOPT</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_6f5266f5" src="qrs/6f5266f5.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/6f5266f5.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('6f5266f5', 'JSALAOPT')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="l4ppf">
+                <div class="card-header">
+                    <h3>L4PPF</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_5bde1120" src="qrs/5bde1120.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/5bde1120.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('5bde1120', 'L4PPF')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="l5mulfarm">
+                <div class="card-header">
+                    <h3>L5MULFARM</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_39f56250" src="qrs/39f56250.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/39f56250.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('39f56250', 'L5MULFARM')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="lanathum">
+                <div class="card-header">
+                    <h3>LANATHUM</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_c33ccf3e" src="qrs/c33ccf3e.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/c33ccf3e.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('c33ccf3e', 'LANATHUM')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="lbiolclin">
+                <div class="card-header">
+                    <h3>LBIOLCLIN</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_ada2674f" src="qrs/ada2674f.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/ada2674f.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('ada2674f', 'LBIOLCLIN')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="lbioqbiolmol">
+                <div class="card-header">
+                    <h3>LBIOQBIOLMOL</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_c6774426" src="qrs/c6774426.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/c6774426.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('c6774426', 'LBIOQBIOLMOL')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="lfisica1">
+                <div class="card-header">
+                    <h3>LFISICA1</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_42949c52" src="qrs/42949c52.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/42949c52.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('42949c52', 'LFISICA1')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="lfisica2">
+                <div class="card-header">
+                    <h3>LFISICA2</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_354f0679" src="qrs/354f0679.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/354f0679.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('354f0679', 'LFISICA2')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="lmicros1">
+                <div class="card-header">
+                    <h3>LMICROS1</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_565d15bd" src="qrs/565d15bd.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/565d15bd.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('565d15bd', 'LMICROS1')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="lmicros2">
+                <div class="card-header">
+                    <h3>LMICROS2</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_4acd28eb" src="qrs/4acd28eb.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/4acd28eb.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('4acd28eb', 'LMICROS2')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="lmicros3">
+                <div class="card-header">
+                    <h3>LMICROS3</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_77c3c407" src="qrs/77c3c407.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/77c3c407.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('77c3c407', 'LMICROS3')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="lquianal">
+                <div class="card-header">
+                    <h3>LQUIANAL</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_f7e9caca" src="qrs/f7e9caca.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/f7e9caca.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('f7e9caca', 'LQUIANAL')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="lquifis">
+                <div class="card-header">
+                    <h3>LQUIFIS</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_d1da2da1" src="qrs/d1da2da1.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/d1da2da1.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('d1da2da1', 'LQUIFIS')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="lquigral">
+                <div class="card-header">
+                    <h3>LQUIGRAL</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_bb75e8aa" src="qrs/bb75e8aa.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/bb75e8aa.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('bb75e8aa', 'LQUIGRAL')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="lquiinor">
+                <div class="card-header">
+                    <h3>LQUIINOR</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_19569332" src="qrs/19569332.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/19569332.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('19569332', 'LQUIINOR')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="lquiorg1">
+                <div class="card-header">
+                    <h3>LQUIORG1</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_75ea829f" src="qrs/75ea829f.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/75ea829f.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('75ea829f', 'LQUIORG1')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="lquiorg2">
+                <div class="card-header">
+                    <h3>LQUIORG2</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_6c794b6a" src="qrs/6c794b6a.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/6c794b6a.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('6c794b6a', 'LQUIORG2')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="nsala101">
+                <div class="card-header">
+                    <h3>NSALA101</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_0a1a73a2" src="qrs/0a1a73a2.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/0a1a73a2.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('0a1a73a2', 'NSALA101')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="nsala102">
+                <div class="card-header">
+                    <h3>NSALA102</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_7631b665" src="qrs/7631b665.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/7631b665.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('7631b665', 'NSALA102')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="nsala103">
+                <div class="card-header">
+                    <h3>NSALA103</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_8f6c9717" src="qrs/8f6c9717.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/8f6c9717.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('8f6c9717', 'NSALA103')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="nsala104">
+                <div class="card-header">
+                    <h3>NSALA104</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_199437f3" src="qrs/199437f3.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/199437f3.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('199437f3', 'NSALA104')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="nsala105">
+                <div class="card-header">
+                    <h3>NSALA105</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_08c9d020" src="qrs/08c9d020.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/08c9d020.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('08c9d020', 'NSALA105')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="nsala106">
+                <div class="card-header">
+                    <h3>NSALA106</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_b0eb6993" src="qrs/b0eb6993.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/b0eb6993.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('b0eb6993', 'NSALA106')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="nsala107">
+                <div class="card-header">
+                    <h3>NSALA107</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_6091f888" src="qrs/6091f888.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/6091f888.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('6091f888', 'NSALA107')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="nsala108">
+                <div class="card-header">
+                    <h3>NSALA108</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_628cc16d" src="qrs/628cc16d.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/628cc16d.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('628cc16d', 'NSALA108')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="nsala201">
+                <div class="card-header">
+                    <h3>NSALA201</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_c6e62b7f" src="qrs/c6e62b7f.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/c6e62b7f.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('c6e62b7f', 'NSALA201')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="nsala202">
+                <div class="card-header">
+                    <h3>NSALA202</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_f90069e2" src="qrs/f90069e2.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/f90069e2.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('f90069e2', 'NSALA202')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="nsala203">
+                <div class="card-header">
+                    <h3>NSALA203</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_7a9b2921" src="qrs/7a9b2921.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/7a9b2921.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('7a9b2921', 'NSALA203')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="nsala204">
+                <div class="card-header">
+                    <h3>NSALA204</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_bb7384d8" src="qrs/bb7384d8.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/bb7384d8.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('bb7384d8', 'NSALA204')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="nsala205">
+                <div class="card-header">
+                    <h3>NSALA205</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_06072b67" src="qrs/06072b67.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/06072b67.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('06072b67', 'NSALA205')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="nsala206">
+                <div class="card-header">
+                    <h3>NSALA206</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_4aada402" src="qrs/4aada402.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/4aada402.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('4aada402', 'NSALA206')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="nsala207">
+                <div class="card-header">
+                    <h3>NSALA207</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_9e56255c" src="qrs/9e56255c.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/9e56255c.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('9e56255c', 'NSALA207')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="ocedhac1">
+                <div class="card-header">
+                    <h3>OCEDHAC1</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_240d9fdb" src="qrs/240d9fdb.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/240d9fdb.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('240d9fdb', 'OCEDHAC1')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="pasala101">
+                <div class="card-header">
+                    <h3>PASALA101</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_7a0ca0f4" src="qrs/7a0ca0f4.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/7a0ca0f4.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('7a0ca0f4', 'PASALA101')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="pasala102">
+                <div class="card-header">
+                    <h3>PASALA102</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_393f9a80" src="qrs/393f9a80.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/393f9a80.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('393f9a80', 'PASALA102')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="pasala103">
+                <div class="card-header">
+                    <h3>PASALA103</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_0e16fe14" src="qrs/0e16fe14.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/0e16fe14.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('0e16fe14', 'PASALA103')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="pasala201">
+                <div class="card-header">
+                    <h3>PASALA201</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_0713940b" src="qrs/0713940b.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/0713940b.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('0713940b', 'PASALA201')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="pasala202">
+                <div class="card-header">
+                    <h3>PASALA202</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_9ea30474" src="qrs/9ea30474.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/9ea30474.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('9ea30474', 'PASALA202')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="pcsala101">
+                <div class="card-header">
+                    <h3>PCSALA101</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_bd524e5f" src="qrs/bd524e5f.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/bd524e5f.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('bd524e5f', 'PCSALA101')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="pcsala102">
+                <div class="card-header">
+                    <h3>PCSALA102</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_e2f4f3e4" src="qrs/e2f4f3e4.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/e2f4f3e4.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('e2f4f3e4', 'PCSALA102')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="pcsala103">
+                <div class="card-header">
+                    <h3>PCSALA103</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_ad2f8dc8" src="qrs/ad2f8dc8.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/ad2f8dc8.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('ad2f8dc8', 'PCSALA103')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="pcsala104">
+                <div class="card-header">
+                    <h3>PCSALA104</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_91ef773b" src="qrs/91ef773b.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/91ef773b.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('91ef773b', 'PCSALA104')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="pcsala105">
+                <div class="card-header">
+                    <h3>PCSALA105</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_a0c0eff3" src="qrs/a0c0eff3.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/a0c0eff3.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('a0c0eff3', 'PCSALA105')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="pcsala106">
+                <div class="card-header">
+                    <h3>PCSALA106</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_fea6f134" src="qrs/fea6f134.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/fea6f134.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('fea6f134', 'PCSALA106')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="pcsala107">
+                <div class="card-header">
+                    <h3>PCSALA107</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_3478b28b" src="qrs/3478b28b.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/3478b28b.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('3478b28b', 'PCSALA107')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="pcsala108">
+                <div class="card-header">
+                    <h3>PCSALA108</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_6a6deeb9" src="qrs/6a6deeb9.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/6a6deeb9.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('6a6deeb9', 'PCSALA108')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="pcsala112">
+                <div class="card-header">
+                    <h3>PCSALA112</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_21e2d729" src="qrs/21e2d729.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/21e2d729.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('21e2d729', 'PCSALA112')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="pcsala113">
+                <div class="card-header">
+                    <h3>PCSALA113</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_ad17eff7" src="qrs/ad17eff7.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/ad17eff7.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('ad17eff7', 'PCSALA113')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="pcsala114">
+                <div class="card-header">
+                    <h3>PCSALA114</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_8ef0ab5b" src="qrs/8ef0ab5b.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/8ef0ab5b.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('8ef0ab5b', 'PCSALA114')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="pcsala115">
+                <div class="card-header">
+                    <h3>PCSALA115</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_0cfd7e6e" src="qrs/0cfd7e6e.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/0cfd7e6e.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('0cfd7e6e', 'PCSALA115')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="pdsala1">
+                <div class="card-header">
+                    <h3>PDSALA1</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_5d96dbdb" src="qrs/5d96dbdb.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/5d96dbdb.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('5d96dbdb', 'PDSALA1')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="pdsala10">
+                <div class="card-header">
+                    <h3>PDSALA10</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_6f8166dd" src="qrs/6f8166dd.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/6f8166dd.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('6f8166dd', 'PDSALA10')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="pdsala11">
+                <div class="card-header">
+                    <h3>PDSALA11</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_3fa494be" src="qrs/3fa494be.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/3fa494be.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('3fa494be', 'PDSALA11')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="pdsala12">
+                <div class="card-header">
+                    <h3>PDSALA12</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_74cda737" src="qrs/74cda737.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/74cda737.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('74cda737', 'PDSALA12')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="pdsala13">
+                <div class="card-header">
+                    <h3>PDSALA13</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_18f26e28" src="qrs/18f26e28.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/18f26e28.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('18f26e28', 'PDSALA13')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="pdsala2">
+                <div class="card-header">
+                    <h3>PDSALA2</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_e30a0a1d" src="qrs/e30a0a1d.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/e30a0a1d.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('e30a0a1d', 'PDSALA2')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="pdsala3">
+                <div class="card-header">
+                    <h3>PDSALA3</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_515d10de" src="qrs/515d10de.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/515d10de.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('515d10de', 'PDSALA3')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="pdsala4">
+                <div class="card-header">
+                    <h3>PDSALA4</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_3bde0c58" src="qrs/3bde0c58.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/3bde0c58.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('3bde0c58', 'PDSALA4')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="pdsala5">
+                <div class="card-header">
+                    <h3>PDSALA5</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_d702ab75" src="qrs/d702ab75.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/d702ab75.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('d702ab75', 'PDSALA5')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="pdsala6">
+                <div class="card-header">
+                    <h3>PDSALA6</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_4ab0c110" src="qrs/4ab0c110.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/4ab0c110.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('4ab0c110', 'PDSALA6')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="pdsala8">
+                <div class="card-header">
+                    <h3>PDSALA8</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_08713bde" src="qrs/08713bde.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/08713bde.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('08713bde', 'PDSALA8')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="pdsala9">
+                <div class="card-header">
+                    <h3>PDSALA9</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_3e40cfd9" src="qrs/3e40cfd9.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/3e40cfd9.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('3e40cfd9', 'PDSALA9')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="smultext">
+                <div class="card-header">
+                    <h3>SMULTEXT</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_22bfc670" src="qrs/22bfc670.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/22bfc670.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('22bfc670', 'SMULTEXT')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="smultiusom">
+                <div class="card-header">
+                    <h3>SMULTIUSOM</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_8b0a48c4" src="qrs/8b0a48c4.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/8b0a48c4.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('8b0a48c4', 'SMULTIUSOM')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="smultiusot">
+                <div class="card-header">
+                    <h3>SMULTIUSOT</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_e7d1023f" src="qrs/e7d1023f.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/e7d1023f.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('e7d1023f', 'SMULTIUSOT')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="smultzoc">
+                <div class="card-header">
+                    <h3>SMULTZOC</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_22869b5c" src="qrs/22869b5c.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/22869b5c.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('22869b5c', 'SMULTZOC')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="sparaninfo">
+                <div class="card-header">
+                    <h3>SPARANINFO</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_7cd288d8" src="qrs/7cd288d8.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/7cd288d8.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('7cd288d8', 'SPARANINFO')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="spesasm">
+                <div class="card-header">
+                    <h3>SPESASM</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_0708ab68" src="qrs/0708ab68.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/0708ab68.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('0708ab68', 'SPESASM')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="spesast">
+                <div class="card-header">
+                    <h3>SPESAST</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_c48f7beb" src="qrs/c48f7beb.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/c48f7beb.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('c48f7beb', 'SPESAST')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="sprocveg">
+                <div class="card-header">
+                    <h3>SPROCVEG</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_55b30722" src="qrs/55b30722.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/55b30722.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('55b30722', 'SPROCVEG')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="toscreat">
+                <div class="card-header">
+                    <h3>TOSCREAT</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_045cdb20" src="qrs/045cdb20.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/045cdb20.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('045cdb20', 'TOSCREAT')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="vauditor">
+                <div class="card-header">
+                    <h3>VAUDITOR</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_980def46" src="qrs/980def46.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/980def46.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('980def46', 'VAUDITOR')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="vlanavet1">
+                <div class="card-header">
+                    <h3>VLANAVET1</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_29205c49" src="qrs/29205c49.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/29205c49.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('29205c49', 'VLANAVET1')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="vlcieani">
+                <div class="card-header">
+                    <h3>VLCIEANI</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_bbd4681f" src="qrs/bbd4681f.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/bbd4681f.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('bbd4681f', 'VLCIEANI')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="vlcomp">
+                <div class="card-header">
+                    <h3>VLCOMP</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_4b117534" src="qrs/4b117534.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/4b117534.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('4b117534', 'VLCOMP')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="vnecropsi">
+                <div class="card-header">
+                    <h3>VNECROPSI</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_36c35e48" src="qrs/36c35e48.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/36c35e48.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('36c35e48', 'VNECROPSI')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="vpabpean">
+                <div class="card-header">
+                    <h3>VPABPEAN</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_76d120fe" src="qrs/76d120fe.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/76d120fe.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('76d120fe', 'VPABPEAN')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="vsala1">
+                <div class="card-header">
+                    <h3>VSALA1</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_394587e0" src="qrs/394587e0.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/394587e0.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('394587e0', 'VSALA1')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="vsandes">
+                <div class="card-header">
+                    <h3>VSANDES</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_3f0b6693" src="qrs/3f0b6693.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/3f0b6693.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('3f0b6693', 'VSANDES')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="vscapact">
+                <div class="card-header">
+                    <h3>VSCAPACT</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_d0cf01ba" src="qrs/d0cf01ba.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/d0cf01ba.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('d0cf01ba', 'VSCAPACT')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+            <div class="card" data-nombre="vsjuliof">
+                <div class="card-header">
+                    <h3>VSJULIOF</h3>
+                </div>
+                <div class="card-qr">
+                    <img id="qr_a86b4dee" src="qrs/a86b4dee.png" alt="QR">
+                </div>
+                <div class="card-buttons">
+                    <a href="salas/a86b4dee.html" class="btn btn-ver">📅 Ver Horario</a>
+                    <button class="btn btn-descargar" onclick="descargarQR('a86b4dee', 'VSJULIOF')">📥 Descargar QR</button>
+                </div>
+            </div>
+
+        </div>
+        
+        <div class="footer">
+            <p>🔲 Los códigos QR son permanentes - Escanea una sola vez</p>
+            <p>✅ Actualizado automáticamente desde Excel - Semana S11</p>
+            <p>📅 16/05/2026 01:10:20</p>
+        </div>
+    </div>
+</div>
+
+<style>
+    .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    .header {
+        text-align: center;
+        color: white;
+        margin-bottom: 30px;
+    }
+    .header h1 { font-size: 2.5rem; margin-bottom: 10px; }
+    .semana-badge {
+        background: #e74c3c;
+        display: inline-block;
+        padding: 8px 20px;
+        border-radius: 30px;
+        font-size: 1rem;
+        margin-top: 10px;
+    }
+    .buscador { margin-bottom: 30px; }
+    .buscador input {
+        width: 100%;
+        max-width: 500px;
+        display: block;
+        margin: 0 auto;
+        padding: 15px 20px;
+        font-size: 1rem;
+        border: none;
+        border-radius: 50px;
+        outline: none;
+    }
+    .stats {
+        text-align: center;
+        color: white;
+        margin-bottom: 20px;
+    }
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 25px;
+    }
+    .card {
+        background: white;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        transition: transform 0.3s;
+    }
+    .card:hover { transform: translateY(-5px); }
+    .card-header {
+        background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+        color: white;
+        padding: 15px;
+        text-align: center;
+    }
+    .card-header h3 { font-size: 1.1rem; }
+    .card-qr { text-align: center; padding: 20px; background: #f8f9fa; }
+    .card-qr img { width: 180px; height: 180px; margin: 0 auto; display: block; }
+    .card-buttons {
+        display: flex;
+        gap: 10px;
+        padding: 15px;
+        background: #f8f9fa;
+    }
+    .btn {
+        flex: 1;
+        text-align: center;
+        padding: 10px;
+        border-radius: 10px;
+        text-decoration: none;
+        font-weight: bold;
+        cursor: pointer;
+        border: none;
+        font-size: 0.85rem;
+    }
+    .btn-ver { background: #3498db; color: white; }
+    .btn-ver:hover { background: #2980b9; }
+    .btn-descargar { background: #27ae60; color: white; }
+    .btn-descargar:hover { background: #229954; }
+    .footer {
+        text-align: center;
+        color: white;
+        margin-top: 40px;
+        padding: 20px;
+    }
+    @media (max-width: 768px) {
+        .header h1 { font-size: 1.5rem; }
+        .grid { grid-template-columns: 1fr; }
+        .card-qr img { width: 140px; height: 140px; }
+    }
+</style>
+
+<script>
+const PASSWORD = "Horariosu2026..";
+
+function verificarPassword() {
+    const inputPass = document.getElementById('password').value;
+    
+    if (inputPass === PASSWORD) {
+        document.getElementById('loginBox').style.display = 'none';
+        document.getElementById('contenido').style.display = 'block';
+        document.body.style.display = 'block'; // Cambiamos a block para que la grilla ocupe todo el ancho
+    } else {
+        document.getElementById('errorMsg').innerHTML = '❌ Contraseña incorrecta';
+    }
+}
+
+function filtrarSalas() {
+    let input = document.getElementById('buscador');
+    let filter = input.value.toLowerCase();
+    let cards = document.getElementsByClassName('card');
+    let visible = 0;
+    
+    for (let i = 0; i < cards.length; i++) {
+        let nombre = cards[i].getAttribute('data-nombre');
+        if (nombre.includes(filter)) {
+            cards[i].style.display = "";
+            visible++;
+        } else {
+            cards[i].style.display = "none";
+        }
+    }
+    document.getElementById('mostrando').innerText = visible;
+}
+
+function descargarQR(hash, nombreSala) {
+    let img = document.getElementById('qr_' + hash);
+    let link = document.createElement('a');
+    link.href = img.src;
+    link.download = 'QR_' + nombreSala.replace(/ /g, '_') + '.png';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Horario - PCSALA113</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            color: white;
+            padding: 25px;
+            text-align: center;
+        }
+        .header h1 { font-size: 1.8rem; margin-bottom: 5px; }
+        .semana-badge {
+            display: inline-block;
+            background: #e74c3c;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-top: 10px;
+        }
+        .horario-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+        .horario-table th {
+            background: #34495e;
+            color: white;
+            padding: 12px;
+        }
+        .horario-table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            vertical-align: top;
+        }
+        .hora-cell {
+            background: #ecf0f1;
+            font-weight: bold;
+            text-align: center;
+            width: 100px;
+        }
+        .clase-cell { background: #fafafa; }
+        .clase-cell.multibloque { background: #e8f4fd; border-left: 3px solid #3498db; }
+        .codigo { font-weight: bold; color: #e74c3c; font-size: 0.8rem; }
+        .nombre { font-weight: 500; color: #2c3e50; margin-top: 5px; font-size: 0.8rem; }
+        .horario-ext { font-size: 0.7rem; color: #e67e22; margin-left: 5px; }
+        .bloqueo-cell { background: #fff3cd; color: #856404; text-align: center; font-weight: bold; }
+        .vacio-cell { background: #f9f9f9; color: #ccc; text-align: center; }
+        .footer {
+            background: #ecf0f1;
+            padding: 15px;
+            text-align: center;
+            font-size: 0.75rem;
+            color: #7f8c8d;
+        }
+        .info-print {
+            text-align: center;
+            margin-top: 20px;
+            padding: 10px;
+            background: #e8f4fd;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            color: #2c3e50;
+        }
+        @media (max-width: 768px) {
+            .horario-table th, .horario-table td { padding: 6px; font-size: 0.7rem; }
+            .header h1 { font-size: 1.2rem; }
+        }
+        @media print {
+            body { background: white; padding: 0; }
+            .header { background: #2c3e50; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .info-print { display: none; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>📋 PCSALA113</h1>
+        <p>Horario semanal actualizado</p>
+        <div class="semana-badge">📅 S11</div>
+    </div>
+    <div style="overflow-x: auto;"><table class="horario-table">
+<thead><tr><th>Horario</th><th>Lunes</th><th>Martes</th><th>Miércoles</th><th>Jueves</th><th>Viernes</th></thead><tbody>
+<tr><td class="hora-cell">08:10-09:40</td>
+
+                    <td class="clase-cell">
+                        <div class="codigo">DPUB110-23</div>
+                        <div class="nombre">DERECHOS FUNDAMENTALES<span class="horario-ext"></span></div>
+                    </td>
+                    
+                    <td class="clase-cell">
+                        <div class="codigo">IEPS127-19</div>
+                        <div class="nombre">EVALUACIÓN PSICOLÓGICA I<span class="horario-ext"></span></div>
+                    </td>
+                    
+                    <td class="clase-cell">
+                        <div class="codigo">EAGR170-24</div>
+                        <div class="nombre">MARKETING AGROALIMENTARIO<span class="horario-ext"></span></div>
+                    </td>
+                    
+                    <td class="clase-cell">
+                        <div class="codigo">FARM173-17</div>
+                        <div class="nombre">FARMACOLOGÍA<span class="horario-ext"></span></div>
+                    </td>
+                    
+                    <td class="clase-cell">
+                        <div class="codigo">QUIM062-19</div>
+                        <div class="nombre">BASES DE QUÍMICA<span class="horario-ext"></span></div>
+                    </td>
+                    </tr>
+<tr><td class="hora-cell">09:50-11:20</td>
+
+                    <td class="clase-cell">
+                        <div class="codigo">QUIM062-19</div>
+                        <div class="nombre">BASES DE QUÍMICA<span class="horario-ext"></span></div>
+                    </td>
+                    
+                    <td class="clase-cell">
+                        <div class="codigo">MATM056-26</div>
+                        <div class="nombre">ÁLGEBRA E INTRODUCCIÓN AL CÁLCULO<span class="horario-ext"></span></div>
+                    </td>
+                    <td class="vacio-cell">—</td>
+
+                    <td class="clase-cell">
+                        <div class="codigo">CITI098-17</div>
+                        <div class="nombre">GEOGRAFÍA FÍSICA<span class="horario-ext"></span></div>
+                    </td>
+                    
+                    <td class="clase-cell">
+                        <div class="codigo">ESTD087-19</div>
+                        <div class="nombre">ESTADÍSTICA APLICADA A LAS CIENCIAS...<span class="horario-ext"></span></div>
+                    </td>
+                    </tr>
+<tr><td class="hora-cell">11:30-13:00</td>
+
+                    <td class="clase-cell">
+                        <div class="codigo">QUIM020-19</div>
+                        <div class="nombre">BIOLOGIA HUMANA I: BASES BIOFÍSICAS...<span class="horario-ext"></span></div>
+                    </td>
+                    
+                    <td class="clase-cell">
+                        <div class="codigo">ADMI010-14</div>
+                        <div class="nombre">ADMINISTRACIÓN<span class="horario-ext"></span></div>
+                    </td>
+                    
+                    <td class="clase-cell">
+                        <div class="codigo">DPRI055-23</div>
+                        <div class="nombre">HISTORIA DEL DERECHO<span class="horario-ext"></span></div>
+                    </td>
+                    
+                    <td class="clase-cell">
+                        <div class="codigo">CIAN244-14</div>
+                        <div class="nombre">GENETICA PECUARIA<span class="horario-ext"></span></div>
+                    </td>
+                    
+                    <td class="clase-cell">
+                        <div class="codigo">CIDI143-20</div>
+                        <div class="nombre">ALEMÁN BÁSICO II A1.2<span class="horario-ext"></span></div>
+                    </td>
+                    </tr>
+<tr><td class="hora-cell">14:10-15:40</td>
+
+                    <td class="clase-cell">
+                        <div class="codigo">MATM086-18</div>
+                        <div class="nombre">CÁLCULO<span class="horario-ext"></span></div>
+                    </td>
+                    
+                    <td class="clase-cell">
+                        <div class="codigo">CIDI057-19</div>
+                        <div class="nombre">COMUNICACIÓN EN LENGUA MATERNA<span class="horario-ext"></span></div>
+                    </td>
+                    
+                    <td class="clase-cell multibloque">
+                        <div class="codigo">PSVE155-14</div>
+                        <div class="nombre">GENÉTICA<span class="horario-ext"> (14:10-16:35)</span></div>
+                    </td>
+                    
+                    <td class="clase-cell">
+                        <div class="codigo">QFAR108-22</div>
+                        <div class="nombre">FARMACOLOGÍA CLÍNICA PARA ENFERMERÍ...<span class="horario-ext"></span></div>
+                    </td>
+                    <td class="vacio-cell">—</td>
+</tr>
+<tr><td class="hora-cell">15:50-17:20</td>
+
+                    <td class="clase-cell">
+                        <div class="codigo">CIDI085-16</div>
+                        <div class="nombre">INGLÉS I<span class="horario-ext"></span></div>
+                    </td>
+                    
+                    <td class="clase-cell">
+                        <div class="codigo">PRAN150-26</div>
+                        <div class="nombre">ESTABLECIMIENTO Y MANEJO DE PRADERA...<span class="horario-ext"></span></div>
+                    </td>
+                    
+                    <td class="clase-cell multibloque">
+                        <div class="codigo">PSVE155-14</div>
+                        <div class="nombre">GENÉTICA<span class="horario-ext"> (14:10-16:35)</span></div>
+                    </td>
+                    
+                    <td class="clase-cell">
+                        <div class="codigo">ADMI030-14</div>
+                        <div class="nombre">HABILIDADES RELACIONALES I<span class="horario-ext"></span></div>
+                    </td>
+                    <td class="vacio-cell">—</td>
+</tr>
+<tr><td class="hora-cell">17:30-19:00</td>
+
+                    <td class="clase-cell">
+                        <div class="codigo">FARM151-14</div>
+                        <div class="nombre">FISIOLOGÍA VETERINARIA<span class="horario-ext"></span></div>
+                    </td>
+                    
+                    <td class="clase-cell">
+                        <div class="codigo">MATM002-25</div>
+                        <div class="nombre">MATEMÁTICAS<span class="horario-ext"></span></div>
+                    </td>
+                    
+                    <td class="clase-cell">
+                        <div class="codigo">PSIQ077-18</div>
+                        <div class="nombre">PSICOLOGÍA DEL DESARROLLO<span class="horario-ext"></span></div>
+                    </td>
+                    <td class="vacio-cell">—</td>
+<td class="vacio-cell">—</td>
+</tr>
+<tr><td class="hora-cell">19:10-20:40</td>
+<td class="vacio-cell">—</td>
+<td class="vacio-cell">—</td>
+<td class="vacio-cell">—</td>
+<td class="vacio-cell">—</td>
+<td class="vacio-cell">—</td>
+</tr>
+</tbody></table></div>
+    <div class="info-print">
+        🔲 Escanea el código QR pegado en la puerta de esta sala para acceder siempre al horario actualizado
+    </div>
+    <div class="footer">
+        🗓️ Última actualización: 16/05/2026 01:10
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Horario - NSALA206</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            color: white;
+            padding: 25px;
+            text-align: center;
+        }
+        .header h1 { font-size: 1.8rem; margin-bottom: 5px; }
+        .semana-badge {
+            display: inline-block;
+            background: #e74c3c;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-top: 10px;
+        }
+        .horario-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+        .horario-table th {
+            background: #34495e;
+            color: white;
+            padding: 12px;
+        }
+        .horario-table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            vertical-align: top;
+        }
+        .hora-cell {
+            background: #ecf0f1;
+            font-weight: bold;
+            text-align: center;
+            width: 100px;
+        }
+        .clase-cell { background: #fafafa; }
+        .clase-cell.multibloque { background: #e8f4fd; border-left: 3px solid #3498db; }
+        .codigo { font-weight: bold; color: #e74c3c; font-size: 0.8rem; }
+        .nombre { font-weight: 500; color: #2c3e50; margin-top: 5px; font-size: 0.8rem; }
+        .horario-ext { font-size: 0.7rem; color: #e67e22; margin-left: 5px; }
+        .bloqueo-cell { background: #fff3cd; color: #856404; text-align: center; font-weight: bold; }
+        .vacio-cell { background: #f9f9f9; color: #ccc; text-align: center; }
+        .footer {
+            background: #ecf0f1;
+            padding: 15px;
+            text-align: center;
+            font-size: 0.75rem;
+            color: #7f8c8d;
+        }
+        .info-print {
+            text-align: center;
+            margin-top: 20px;
+            padding: 10px;
+            background: #e8f4fd;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            color: #2c3e50;
+        }
+        @media (max-width: 768px) {
+            .horario-table th, .horario-table td { padding: 6px; font-size: 0.7rem; }
+            .header h1 { font-size: 1.2rem; }
+        }
+        @media print {
+            body { background: white; padding: 0; }
+            .header { background: #2c3e50; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .info-print { display: none; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>📋 NSALA206</h1>
+        <p>Horario semanal actualizado</p>
+        <div class="semana-badge">📅 S11</div>
+    </div>
+    <div style="overflow-x: auto;"><table class="horario-table">
+<thead><tr><th>Horario</th><th>Lunes</th><th>Martes</th><th>Miércoles</th><th>Jueves</th><th>Viernes</th></thead><tbody>
+<tr><td class="hora-cell">08:10-09:40</td>
+
+                    <td class="clase-cell">
+                        <div class="codigo">BIMI115-16</div>
+                        <div class="nombre">BIOQUÍMICA GENERAL Y MOLECULAR<span class="horario-ext"></span></div>
+                    </td>
+                    
+                    <td class="clase-cell">
+                        <div class="codigo">ICOM025-05</div>
+                        <div class="nombre">REDACCION PERIODISTICA<span class="horario-ext"></span></div>
+                    </td>
+                    
+                    <td class="clase-cell">
+                        <div class="codigo">IEPS132-19</div>
+                        <div class="nombre">PSICOPATOLOGÍA<span class="horario-ext"></span></div>
+                    </td>
+                    
+                    <td class="clase-cell">
+                        <div class="codigo">ILIN050-19</div>
+                        <div class="nombre">ENGLISH LANGUAGE I: THE INDIVIDUAL ...<span class="horario-ext"></span></div>
+                    </td>
+                    <td class="vacio-cell">—</td>
+</tr>
+<tr><td class="hora-cell">09:50-11:20</td>
+
+                    <td class="clase-cell">
+                        <div class="codigo">MATM067-18</div>
+                        <div class="nombre">ÁLGEBRA<span class="horario-ext"></span></div>
+                    </td>
+                    
+                    <td class="clase-cell">
+                        <div class="codigo">MATM067-18</div>
+                        <div class="nombre">ÁLGEBRA<span class="horario-ext"></span></div>
+                    </td>
+                    
+                    <td class="clase-cell">
+                        <div class="codigo">MATM024-14</div>
+                        <div class="nombre">ÁLGEBRA<span class="horario-ext"></span></div>
+                    </td>
+                    
+                    <td class="clase-cell">
+                        <div class="codigo">QUIM020-19</div>
+                        <div class="nombre">BIOLOGIA HUMANA I: BASES BIOFÍSICAS...<span class="horario-ext"></span></div>
+                    </td>
+                    
+                    <td class="clase-cell">
+                        <div class="codigo">MATM067-18</div>
+                        <div class="nombre">ÁLGEBRA<span class="horario-ext"></span></div>
+                    </td>
+                    </tr>
+<tr><td class="hora-cell">11:30-13:00</td>
+
+                    <td class="clase-cell">
+                        <div class="codigo">ICMO151-25</div>
+                        <div class="nombre">TERAPIA OCUPACIONAL EN PERSONAS MAY...<span class="horario-ext"></span></div>
+                    </td>
+                    
+                    <td class="clase-cell">
+                        <div class="codigo">ICML107-19</div>
+                        <div class="nombre">INVERTEBRADOS MARINOS<span class="horario-ext"></span></div>
+                    </td>
+                    
+                    <td class="clase-cell">
+                        <div class="codigo">EFIS206-18</div>
+                        <div class="nombre">MOTRICIDAD Y SALUD<span class="horario-ext"></span></div>
+                    </td>
+                    
+                    <td class="clase-cell">
+                        <div class="codigo">ESTD126-17</div>
+                        <div class="nombre">ESTADÍSTICA APLICADA A LOS RECURSOS...<span class="horario-ext"></span></div>
+                    </td>
+                    
+                    <td class="clase-cell">
+                        <div class="codigo">NEUR118-19</div>
+                        <div class="nombre">ENFOQUE BIOMÉDICO: NEUROLOGÍA PARA ...<span class="horario-ext"></span></div>
+                    </td>
+                    </tr>
+<tr><td class="hora-cell">14:10-15:40</td>
+
+                    <td class="clase-cell">
+                        <div class="codigo">PSIQ098-17</div>
+                        <div class="nombre">PSICOLOGÍA ANTROPOLÓGICA<span class="horario-ext"></span></div>
+                    </td>
+                    
+                    <td class="clase-cell">
+                        <div class="codigo">ENFA051-20</div>
+                        <div class="nombre">BASES CONCEPTUALES DE LA ENFERMERÍA<span class="horario-ext"></span></div>
+                    </td>
+                    
+                    <td class="clase-cell">
+                        <div class="codigo">DPRI202-23</div>
+                        <div class="nombre">DERECHO SOCIETARIO<span class="horario-ext"></span></div>
+                    </td>
+                    
+                    <td class="clase-cell">
+                        <div class="codigo">ICSO181-25</div>
+                        <div class="nombre">RESOLUCIÓN DE CONFLICTOS AMBIENTALE...<span class="horario-ext"></span></div>
+                    </td>
+                    
+                    <td class="clase-cell">
+                        <div class="codigo">FARM173-17</div>
+                        <div class="nombre">FARMACOLOGÍA<span class="horario-ext"></span></div>
+                    </td>
+                    </tr>
+<tr><td class="hora-cell">15:50-17:20</td>
+
+                    <td class="clase-cell">
+                        <div class="codigo">DPUB110-23</div>
+                        <div class="nombre">DERECHOS FUNDAMENTALES<span class="horario-ext"></span></div>
+                    </td>
+                    
+                    <td class="clase-cell">
+                        <div class="codigo">ENFA051-20</div>
+                        <div class="nombre">BASES CONCEPTUALES DE LA ENFERMERÍA<span class="horario-ext"></span></div>
+                    </td>
+                    
+                    <td class="clase-cell">
+                        <div class="codigo">MATM002-25</div>
+                        <div class="nombre">MATEMÁTICAS<span class="horario-ext"></span></div>
+                    </td>
+                    
+                    <td class="clase-cell">
+                        <div class="codigo">MATM071-19</div>
+                        <div class="nombre">ÁLGEBRA<span class="horario-ext"></span></div>
+                    </td>
+                    
+                    <td class="clase-cell">
+                        <div class="codigo">IEPS099-19</div>
+                        <div class="nombre">DESARROLLO DE COMPETENCIAS ACADÉMIC...<span class="horario-ext"></span></div>
+                    </td>
+                    </tr>
+<tr><td class="hora-cell">17:30-19:00</td>
+
+                    <td class="clase-cell">
+                        <div class="codigo">ICML110-16</div>
+                        <div class="nombre">PRINCIPIOS DE GENÉTICA HUMANA<span class="horario-ext"></span></div>
+                    </td>
+                    
+                    <td class="clase-cell">
+                        <div class="codigo">BIMI105-19</div>
+                        <div class="nombre">BIOQUÍMICA GENERAL<span class="horario-ext"></span></div>
+                    </td>
+                    <td class="vacio-cell">—</td>
+<td class="vacio-cell">—</td>
+<td class="vacio-cell">—</td>
+</tr>
+<tr><td class="hora-cell">19:10-20:40</td>
+<td class="vacio-cell">—</td>
+<td class="vacio-cell">—</td>
+<td class="vacio-cell">—</td>
+<td class="vacio-cell">—</td>
+<td class="vacio-cell">—</td>
+</tr>
+</tbody></table></div>
+    <div class="info-print">
+        🔲 Escanea el código QR pegado en la puerta de esta sala para acceder siempre al horario actualizado
+    </div>
+    <div class="footer">
+        🗓️ Última actualización: 16/05/2026 01:10
+    </div>
+</div>
+</body>
+</html>

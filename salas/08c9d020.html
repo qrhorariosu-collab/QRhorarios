@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Horario - NSALA105</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            color: white;
+            padding: 25px;
+            text-align: center;
+        }
+        .header h1 { font-size: 1.8rem; margin-bottom: 5px; }
+        .semana-badge {
+            display: inline-block;
+            background: #e74c3c;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-top: 10px;
+        }
+        .horario-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+        .horario-table th {
+            background: #34495e;
+            color: white;
+            padding: 12px;
+        }
+        .horario-table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            vertical-align: top;
+        }
+        .hora-cell {
+            background: #ecf0f1;
+            font-weight: bold;
+            text-align: center;
+            width: 100px;
+        }
+        .clase-cell { background: #fafafa; }
+        .clase-cell.multibloque { background: #e8f4fd; border-left: 3px solid #3498db; }
+        .codigo { font-weight: bold; color: #e74c3c; font-size: 0.8rem; }
+        .nombre { font-weight: 500; color: #2c3e50; margin-top: 5px; font-size: 0.8rem; }
+        .horario-ext { font-size: 0.7rem; color: #e67e22; margin-left: 5px; }
+        .bloqueo-cell { background: #fff3cd; color: #856404; text-align: center; font-weight: bold; }
+        .vacio-cell { background: #f9f9f9; color: #ccc; text-align: center; }
+        .footer {
+            background: #ecf0f1;
+            padding: 15px;
+            text-align: center;
+            font-size: 0.75rem;
+            color: #7f8c8d;
+        }
+        .info-print {
+            text-align: center;
+            margin-top: 20px;
+            padding: 10px;
+            background: #e8f4fd;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            color: #2c3e50;
+        }
+        @media (max-width: 768px) {
+            .horario-table th, .horario-table td { padding: 6px; font-size: 0.7rem; }
+            .header h1 { font-size: 1.2rem; }
+        }
+        @media print {
+            body { background: white; padding: 0; }
+            .header { background: #2c3e50; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .info-print { display: none; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>📋 NSALA105</h1>
+        <p>Horario semanal actualizado</p>
+        <div class="semana-badge">📅 S11</div>
+    </div>
+    <div style="overflow-x: auto;"><table class="horario-table">
+<thead><tr><th>Horario</th><th>Lunes</th><th>Martes</th><th>Miércoles</th><th>Jueves</th><th>Viernes</th></thead><tbody>
+<tr><td class="hora-cell">08:10-09:40</td>
+
+                    <td class="clase-cell">
+                        <div class="codigo">PSVE213-24</div>
+                        <div class="nombre">RAICES Y TUBERCULOS<span class="horario-ext"></span></div>
+                    </td>
+                    
+                    <td class="clase-cell">
+                        <div class="codigo">CIDI054-16</div>
+                        <div class="nombre">INGLÉS I<span class="horario-ext"></span></div>
+                    </td>
+                    
+                    <td class="clase-cell">
+                        <div class="codigo">CIDI080-01</div>
+                        <div class="nombre">INGLES PARA LA SALUD I<span class="horario-ext"></span></div>
+                    </td>
+                    
+                    <td class="clase-cell">
+                        <div class="codigo">CIDI054-16</div>
+                        <div class="nombre">INGLÉS I<span class="horario-ext"></span></div>
+                    </td>
+                    <td class="vacio-cell">—</td>
+</tr>
+<tr><td class="hora-cell">09:50-11:20</td>
+
+                    <td class="clase-cell">
+                        <div class="codigo">QUIM158-16</div>
+                        <div class="nombre">QUÍMICA ORGÁNICA APLICADA<span class="horario-ext"></span></div>
+                    </td>
+                    
+                    <td class="clase-cell">
+                        <div class="codigo">ILIN168-22</div>
+                        <div class="nombre">SCIENTIFIC AND TECHNICAL TRANSLATIO...<span class="horario-ext"></span></div>
+                    </td>
+                    
+                    <td class="clase-cell">
+                        <div class="codigo">CIDI028-21</div>
+                        <div class="nombre">INTRODUCCIÓN AL INGLÉS<span class="horario-ext"></span></div>
+                    </td>
+                    
+                    <td class="clase-cell">
+                        <div class="codigo">CIAN011-15</div>
+                        <div class="nombre">INTRODUCCIÓN A LOS SISTEMAS DE PROD...<span class="horario-ext"></span></div>
+                    </td>
+                    <td class="bloqueo-cell">🔒 BLOQUEO</td>
+</tr>
+<tr><td class="hora-cell">11:30-13:00</td>
+
+                    <td class="clase-cell">
+                        <div class="codigo">PLAC093-18</div>
+                        <div class="nombre">LECTURA COMPRENSIVA Y EXPRESIÓN ESC...<span class="horario-ext"></span></div>
+                    </td>
+                    
+                    <td class="clase-cell">
+                        <div class="codigo">CIDI049-16</div>
+                        <div class="nombre">COMUNICACIÓN EN LENGUA INGLESA NIVE...<span class="horario-ext"></span></div>
+                    </td>
+                    
+                    <td class="clase-cell">
+                        <div class="codigo">CIDI044-19</div>
+                        <div class="nombre">ORATORIA Y REDACCIÓN<span class="horario-ext"></span></div>
+                    </td>
+                    
+                    <td class="clase-cell">
+                        <div class="codigo">ENFA214-24</div>
+                        <div class="nombre">INTRODUCCIÓN A LA DOCENCIA EN CIENC...<span class="horario-ext"></span></div>
+                    </td>
+                    
+                    <td class="clase-cell">
+                        <div class="codigo">ITCL203-18</div>
+                        <div class="nombre">ENVASES PARA ALIMENTOS<span class="horario-ext"></span></div>
+                    </td>
+                    </tr>
+<tr><td class="hora-cell">14:10-15:40</td>
+
+                    <td class="clase-cell">
+                        <div class="codigo">CIDI119-17</div>
+                        <div class="nombre">INGLÉS III<span class="horario-ext"></span></div>
+                    </td>
+                    
+                    <td class="clase-cell">
+                        <div class="codigo">MATM066-17</div>
+                        <div class="nombre">ÁLGEBRA<span class="horario-ext"></span></div>
+                    </td>
+                    <td class="bloqueo-cell">🔒 BLOQUEO</td>
+<td class="vacio-cell">—</td>
+<td class="vacio-cell">—</td>
+</tr>
+<tr><td class="hora-cell">15:50-17:20</td>
+
+                    <td class="clase-cell">
+                        <div class="codigo">CIDI026-14</div>
+                        <div class="nombre">EXPRESIÓN ORAL Y ESCRITA<span class="horario-ext"></span></div>
+                    </td>
+                    <td class="bloqueo-cell">🔒 BLOQUEO</td>
+
+                    <td class="clase-cell">
+                        <div class="codigo">CIDI026-14</div>
+                        <div class="nombre">EXPRESIÓN ORAL Y ESCRITA<span class="horario-ext"></span></div>
+                    </td>
+                    
+                    <td class="clase-cell">
+                        <div class="codigo">CIDI119-17</div>
+                        <div class="nombre">INGLÉS III<span class="horario-ext"></span></div>
+                    </td>
+                    
+                    <td class="clase-cell">
+                        <div class="codigo">ICSO186-18</div>
+                        <div class="nombre">DIDÁCTICA DE LA ESPECIALIDAD<span class="horario-ext"></span></div>
+                    </td>
+                    </tr>
+<tr><td class="hora-cell">17:30-19:00</td>
+
+                    <td class="clase-cell">
+                        <div class="codigo">CIDI026-14</div>
+                        <div class="nombre">EXPRESIÓN ORAL Y ESCRITA<span class="horario-ext"></span></div>
+                    </td>
+                    
+                    <td class="clase-cell">
+                        <div class="codigo">CIDI028-21</div>
+                        <div class="nombre">INTRODUCCIÓN AL INGLÉS<span class="horario-ext"></span></div>
+                    </td>
+                    
+                    <td class="clase-cell">
+                        <div class="codigo">FISL150-26</div>
+                        <div class="nombre">FISIOPATOLOGÍA-R<span class="horario-ext"></span></div>
+                    </td>
+                    <td class="vacio-cell">—</td>
+<td class="vacio-cell">—</td>
+</tr>
+<tr><td class="hora-cell">19:10-20:40</td>
+<td class="vacio-cell">—</td>
+<td class="vacio-cell">—</td>
+<td class="vacio-cell">—</td>
+<td class="vacio-cell">—</td>
+<td class="vacio-cell">—</td>
+</tr>
+</tbody></table></div>
+    <div class="info-print">
+        🔲 Escanea el código QR pegado en la puerta de esta sala para acceder siempre al horario actualizado
+    </div>
+    <div class="footer">
+        🗓️ Última actualización: 16/05/2026 01:10
+    </div>
+</div>
+</body>
+</html>
