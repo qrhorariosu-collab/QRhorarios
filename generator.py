@@ -515,7 +515,7 @@ def main():
     print("=" * 60)
     
     ARCHIVO_EXCEL = 'horarios.xlsx'
-    SEMANA_ACTUAL = 'S10'
+    SEMANA_ACTUAL = 'S11'
     
     if not os.path.exists(ARCHIVO_EXCEL):
         print(f"❌ Error: No se encuentra {ARCHIVO_EXCEL}")
