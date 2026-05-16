@@ -130,7 +130,7 @@ def generar_html_sala(nombre_sala, horarios, output_path, semana_actual):
     
     html_tabla += '</tbody></table></div>'
     
-    nombre_mostrar = nombre_sala.replace('PDSALA', 'SALA ')
+    nombre_mostrar = nombre_sala
     
     html_completo = f'''<!DOCTYPE html>
 <html lang="es">
@@ -339,7 +339,7 @@ def generar_index_con_estilo(salas, semana_actual, output_dir):
     
     for nombre_sala in salas.keys():
         hash_sala = generar_hash_sala(nombre_sala)
-        nombre_mostrar = nombre_sala.replace('PDSALA', 'SALA ')
+        nombre_mostrar = nombre_sala
         
         html_completo += f'''
             <div class="card" data-nombre="{html.escape(nombre_sala).lower()}">
