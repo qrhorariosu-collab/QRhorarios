@@ -7,28 +7,29 @@ import html
 import os
 import hashlib
 
+# Definición de los bloques horarios estándar
+BLOQUES_HORARIOS = [
+    ("08:10:00", "09:40:00", "08:10-09:40"),
+    ("09:50:00", "11:20:00", "09:50-11:20"),
+    ("11:30:00", "13:00:00", "11:30-13:00"),
+    ("14:10:00", "15:40:00", "14:10-15:40"),
+    ("15:50:00", "17:20:00", "15:50-17:20"),
+    ("17:30:00", "19:00:00", "17:30-19:00"),
+    ("19:10:00", "20:40:00", "19:10-20:40"),
+]
+
 def generar_hash_sala(nombre_sala):
     """Genera un hash corto para ofuscar la URL de la sala"""
     return hashlib.md5(nombre_sala.encode()).hexdigest()[:8]
 
 def obtener_bloques_ocupados(hora_inicio, hora_fin):
     """Determina TODOS los bloques de 90 minutos que ocupa una clase"""
-    bloques = [
-        ("08:10:00", "09:40:00", "08:10-09:40"),
-        ("09:50:00", "11:20:00", "09:50-11:20"),
-        ("11:30:00", "13:00:00", "11:30-13:00"),
-        ("14:10:00", "15:40:00", "14:10-15:40"),
-        ("15:50:00", "17:20:00", "15:50-17:20"),
-        ("17:30:00", "19:00:00", "17:30-19:00"),
-        ("19:10:00", "20:40:00", "19:10-20:40"),
-    ]
-    
     hora_inicio_str = hora_inicio.strftime('%H:%M:%S') if isinstance(hora_inicio, time) else str(hora_inicio)
     hora_fin_str = hora_fin.strftime('%H:%M:%S') if isinstance(hora_fin, time) else str(hora_fin)
     
     bloques_ocupados = []
     
-    for bloque_inicio, bloque_fin, bloque_label in bloques:
+    for bloque_inicio, bloque_fin, bloque_label in BLOQUES_HORARIOS:
         if hora_inicio_str < bloque_fin and hora_fin_str > bloque_inicio:
             bloques_ocupados.append((bloque_inicio, bloque_fin, bloque_label))
     
@@ -55,7 +56,15 @@ def leer_excel_semanas(archivo_excel, semana_actual="S10"):
         df_sala = df_activo[df_activo['SALA'] == sala]
         print(f"  📌 Procesando sala: {sala} ({len(df_sala)} clases)")
         
+        # Inicializar todos los bloques horarios como vacíos para esta sala
         horarios = {}
+        for bloque_inicio, bloque_fin, bloque_label in BLOQUES_HORARIOS:
+            clave_bloque = f"{bloque_inicio}_{bloque_fin}"
+            horarios[clave_bloque] = {
+                'hora': bloque_label,
+                'orden': int(bloque_inicio[:2]),
+                'clases': {}
+            }
         
         for _, row in df_sala.iterrows():
             hora_inicio = row['HORA INICIO']
@@ -68,13 +77,6 @@ def leer_excel_semanas(archivo_excel, semana_actual="S10"):
             
             for bloque_inicio, bloque_fin, bloque_label in bloques_ocupados:
                 clave_bloque = f"{bloque_inicio}_{bloque_fin}"
-                
-                if clave_bloque not in horarios:
-                    horarios[clave_bloque] = {
-                        'hora': bloque_label,
-                        'orden': int(bloque_inicio[:2]),
-                        'clases': {}
-                    }
                 
                 if dia not in horarios[clave_bloque]['clases']:
                     horarios[clave_bloque]['clases'][dia] = {
