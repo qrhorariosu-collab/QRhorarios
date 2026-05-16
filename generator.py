@@ -467,6 +467,7 @@ function verificarPassword() {{
     if (inputPass === PASSWORD) {{
         document.getElementById('loginBox').style.display = 'none';
         document.getElementById('contenido').style.display = 'block';
+        document.body.style.display = 'block'; // Cambiamos a block para que la grilla ocupe todo el ancho
     }} else {{
         document.getElementById('errorMsg').innerHTML = '❌ Contraseña incorrecta';
     }}
