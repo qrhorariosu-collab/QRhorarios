@@ -246,8 +246,8 @@ def generar_html_sala(nombre_sala, horarios, output_path, semana_actual):
 def generar_index_con_estilo(salas, semana_actual, output_dir):
     """Genera una página principal PROTEGIDA con contraseña hasheada"""
     
-    # Hash SHA-256 de la contraseña "Horariosu2026.."
-    PASSWORD_HASH = "dbc31a6cf1b0ab3e9df654ad2153c72194e0a64a4a29b4ea11c7c5611db2b950"
+    # Contraseña en texto plano
+    PASSWORD_PLANTA = "Horariosu2026.."
     
     # Construir el HTML completo
     html_completo = f'''<!DOCTYPE html>
@@ -459,26 +459,16 @@ def generar_index_con_estilo(salas, semana_actual, output_dir):
 </style>
 
 <script>
-const PASSWORD_HASH = "{PASSWORD_HASH}";
+const PASSWORD = "Horariosu2026..";
 
-async function verificarPassword() {{
+function verificarPassword() {{
     const inputPass = document.getElementById('password').value;
     
-    try {{
-        const msgBuffer = new TextEncoder().encode(inputPass);
-        const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
-        const hashArray = Array.from(new Uint8Array(hashBuffer));
-        const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-        
-        if (hashHex === PASSWORD_HASH) {{
-            document.getElementById('loginBox').style.display = 'none';
-            document.getElementById('contenido').style.display = 'block';
-        }} else {{
-            document.getElementById('errorMsg').innerHTML = '❌ Contraseña incorrecta';
-        }}
-    }} catch (error) {{
-        console.error("Error procesando el hash:", error);
-        document.getElementById('errorMsg').innerHTML = '❌ Error del sistema';
+    if (inputPass === PASSWORD) {{
+        document.getElementById('loginBox').style.display = 'none';
+        document.getElementById('contenido').style.display = 'block';
+    }} else {{
+        document.getElementById('errorMsg').innerHTML = '❌ Contraseña incorrecta';
     }}
 }}
 
